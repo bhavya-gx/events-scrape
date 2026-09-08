@@ -11,141 +11,192 @@
   :root {
     --pink: #FF2D78;
     --purple: #7B5CFF;
+    --lavender: #EFE9FF;
     --yellow: #FFC93C;
     --mint: #2BD4A8;
     --ink: #17131F;
-    --muted: #6b6478;
-    --bg: #FFFDF8;
+    --muted: #837C93;
+    --bg: #F6F3FF;
     --card: #ffffff;
     --border: #EDE7F6;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
     font-family: "Poppins", system-ui, sans-serif;
+    padding-bottom: 100px;
   }
-  header {
-    padding: 28px 20px 16px;
-    max-width: 760px;
-    margin: 0 auto;
+
+  .hero {
+    background: linear-gradient(160deg, #EAE3FF 0%, #F6F3FF 60%);
+    padding: 26px 20px 18px;
+    border-radius: 0 0 32px 32px;
+    position: relative;
+    overflow: hidden;
   }
-  h1 {
-    font-size: 28px;
-    font-weight: 800;
-    margin: 0 0 6px;
-    letter-spacing: -0.02em;
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,45,120,0.18), transparent 70%);
   }
-  .sub {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.5;
-    margin: 0 0 16px;
+  .hero-inner { max-width: 640px; margin: 0 auto; position: relative; }
+  .greet-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .greet { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+  .greet span.wave { display: inline-block; animation: wave 2.2s ease-in-out infinite; transform-origin: 70% 70%; }
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
   }
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+  .avatar-blob {
+    width: 42px; height: 42px; border-radius: 14px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    display: grid; place-items: center; font-size: 18px;
+    box-shadow: 0 6px 16px rgba(123,92,255,0.35);
   }
-  button {
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 14px;
-    border: none;
-    border-radius: 999px;
-    padding: 12px 20px;
-    background: var(--pink);
-    color: white;
-    cursor: pointer;
+  .sub { color: var(--muted); font-size: 13.5px; line-height: 1.5; margin: 8px 0 16px; max-width: 520px; }
+
+  .chiprow {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px;
+    scrollbar-width: none;
   }
-  button:disabled { opacity: 0.6; cursor: default; }
-  .meta { font-size: 12px; color: var(--muted); font-weight: 500; }
-  main {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 8px 20px 60px;
+  .chiprow::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    font-family: inherit; font-weight: 700; font-size: 13px;
+    border: none; border-radius: 999px; padding: 10px 16px;
+    background: #ffffffb0; color: var(--ink);
+    cursor: pointer; transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+    display: flex; align-items: center; gap: 6px;
   }
-  section { margin-top: 28px; }
-  h2 {
-    font-size: 13px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--purple);
-    margin: 0 0 10px;
+  .chip .n {
+    font-size: 10.5px; font-weight: 800; background: rgba(0,0,0,0.08);
+    border-radius: 999px; padding: 1px 6px;
   }
+  .chip.active { background: var(--ink); color: white; transform: translateY(-1px); }
+  .chip.active .n { background: rgba(255,255,255,0.2); }
+  .chip:active { transform: scale(0.96); }
+
+  main { max-width: 640px; margin: 0 auto; padding: 16px 20px 0; }
+
+  .meta-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--muted); font-weight: 600; margin: 14px 2px 10px;
+  }
+  .meta-row .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--mint); margin-right: 6px; animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
   .card {
     background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 20px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    display: block;
-    text-decoration: none;
-    color: inherit;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 12px;
+    margin-bottom: 12px;
+    display: flex; gap: 12px;
+    text-decoration: none; color: inherit;
+    opacity: 0; transform: translateY(14px) scale(0.98);
+    animation: rise 0.5s cubic-bezier(.2,.8,.2,1) forwards;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
   }
-  a.card:hover { border-color: var(--pink); }
-  .card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
-  .name { font-weight: 700; font-size: 15px; }
-  .when { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .card:hover { box-shadow: 0 10px 26px rgba(80,60,140,0.12); }
+  .card:active { transform: scale(0.985); }
+  @keyframes rise { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .thumb {
+    width: 72px; height: 72px; border-radius: 16px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--lavender), #fff);
+    background-size: cover; background-position: center;
+    display: grid; place-items: center; font-size: 26px;
+  }
+  .card-body { min-width: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+  .name { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
+  .when { font-size: 12.5px; color: var(--muted); font-weight: 500; }
   .badge {
-    font-size: 11px;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    align-self: flex-start;
+    font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px;
+    white-space: nowrap; margin-top: 2px;
   }
-  .badge.open { background: color-mix(in srgb, var(--mint) 18%, white); color: #0e7a5f; }
-  .badge.near { background: color-mix(in srgb, var(--yellow) 30%, white); color: #8a5a00; }
+  .badge.near { background: linear-gradient(135deg, var(--pink), #FF6FA5); color: white; }
+  .badge.open { background: color-mix(in srgb, var(--mint) 16%, white); color: #0e7a5f; }
   .badge.sold { background: #f1eef7; color: var(--muted); }
-  .empty, .error { font-size: 14px; color: var(--muted); padding: 20px 0; }
-  .perk-offer { font-size: 13px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-  footer {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 20px 40px;
-    font-size: 12px;
-    color: var(--muted);
+
+  .empty { font-size: 13.5px; color: var(--muted); padding: 30px 4px; text-align: center; }
+
+  .perk-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 16px; margin-bottom: 12px; display: block; text-decoration: none; color: inherit; opacity: 0; transform: translateY(14px); animation: rise 0.5s cubic-bezier(.2,.8,.2,1) forwards; }
+  .perk-name { font-weight: 700; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
+  .perk-offer { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+  .fab {
+    position: fixed; right: 22px; bottom: 26px;
+    width: 58px; height: 58px; border-radius: 50%; border: none;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: white; font-size: 22px; cursor: pointer;
+    box-shadow: 0 12px 26px rgba(123,92,255,0.4);
+    display: grid; place-items: center;
+    transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
   }
+  .fab:active { transform: scale(0.88); }
+  .fab.spin svg { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 12px);
+    background: var(--ink); color: white; font-size: 12.5px; font-weight: 600;
+    padding: 10px 16px; border-radius: 999px; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease; max-width: 80vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  footer { max-width: 640px; margin: 24px auto 0; padding: 0 20px; font-size: 11.5px; color: var(--muted); text-align: center; }
 </style>
 </head>
 <body>
-<header>
-  <h1>SF perks + AI events sweep 🩵</h1>
-  <p class="sub">
-    A demo agent: it reads Luma's live San Francisco AI events board (real spots-remaining and sold-out
-    status, not guesses) and pairs it with a hand-checked list of free perks around the city. No account, no keys.
-  </p>
-  <div class="row">
-    <button id="refresh">Run the sweep now</button>
-    <span class="meta" id="updated">Loading…</span>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="greet-row">
+      <div>
+        <h1 class="greet"><span class="wave">👋</span> Hey, what's on in SF</h1>
+      </div>
+      <div class="avatar-blob">🌉</div>
+    </div>
+    <p class="sub">A demo agent that reads Luma's live SF AI events (real spots-remaining, not guesses) and pairs it with hand-checked free perks around the city. No account, no keys.</p>
+    <div class="chiprow" id="chips">
+      <button class="chip active" data-tab="near">🔥 Near capacity <span class="n" id="count-near">–</span></button>
+      <button class="chip" data-tab="open">✨ Open now <span class="n" id="count-open">–</span></button>
+      <button class="chip" data-tab="sold">💤 Sold out <span class="n" id="count-sold">–</span></button>
+      <button class="chip" data-tab="perks">🌷 Perks</button>
+    </div>
   </div>
-  <p class="meta" id="notice" style="margin-top:8px;"></p>
-</header>
+</div>
 
 <main>
-  <section>
-    <h2>Register today, near capacity</h2>
-    <div id="near"></div>
-  </section>
-  <section>
-    <h2>Open now</h2>
-    <div id="open"></div>
-  </section>
-  <section>
-    <h2>Sold out (for reference)</h2>
-    <div id="sold"></div>
-  </section>
-  <section>
-    <h2>Free perks near SF</h2>
-    <div id="perks"></div>
-  </section>
+  <div class="meta-row"><span><span class="dot"></span><span id="updated">Loading…</span></span></div>
+  <div id="near"></div>
+  <div id="open" hidden></div>
+  <div id="sold" hidden></div>
+  <div id="perks" hidden></div>
 </main>
 
 <footer id="footer"></footer>
+
+<button class="fab" id="refresh" aria-label="Run the sweep now">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+</button>
+<div class="toast" id="toast"></div>
 
 <script>
   const $ = (id) => document.getElementById(id);
@@ -158,8 +209,42 @@
     if (min < 60) return `${min} min ago`;
     return `${Math.round(min / 60)} hr ago`;
   };
+  const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const CAT_EMOJI = ["🎤","🤝","🎨","🍽️","🛠️","🎉","☕","🧑‍💻"];
+  const emojiFor = (id) => CAT_EMOJI[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % CAT_EMOJI.length];
 
-  function eventCard(e) {
+  // ---- tiny synthesized UI sounds, no audio files needed ----
+  let actx;
+  function tone(freq, dur, type = "sine", gain = 0.05, delay = 0) {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const t0 = actx.currentTime + delay;
+      const osc = actx.createOscillator();
+      const g = actx.createGain();
+      osc.type = type; osc.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(g).connect(actx.destination);
+      osc.start(t0); osc.stop(t0 + dur + 0.02);
+    } catch {}
+  }
+  const sfx = {
+    tap: () => tone(720, 0.06, "sine", 0.04),
+    whoosh: () => { tone(340, 0.18, "sine", 0.05); tone(500, 0.18, "sine", 0.03, 0.05); },
+    success: () => { tone(660, 0.12, "sine", 0.05); tone(880, 0.16, "sine", 0.05, 0.09); },
+  };
+
+  let toastTimer;
+  function toast(msg) {
+    const el = $("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+  }
+
+  function eventCard(e, i) {
     const badge = e.isSoldOut
       ? '<span class="badge sold">Sold out</span>'
       : e.isNearCapacity
@@ -168,58 +253,54 @@
     const where = [e.neighborhood, e.isFree ? "Free" : e.price].filter(Boolean).join(" · ");
     const a = document.createElement("a");
     a.className = "card";
+    a.style.animationDelay = `${Math.min(i, 8) * 0.045}s`;
     a.href = e.url || "#";
     a.target = "_blank";
     a.rel = "noreferrer";
+    a.addEventListener("click", () => sfx.tap());
+    const thumbStyle = e.coverUrl ? `style="background-image:url('${e.coverUrl}')"` : "";
     a.innerHTML = `
-      <div class="card-top">
-        <div>
-          <div class="name">${escapeHtml(e.name)}</div>
-          <div class="when">${fmtTime(e.startAt)}${where ? " · " + escapeHtml(where) : ""}</div>
-        </div>
+      <div class="thumb" ${thumbStyle}>${e.coverUrl ? "" : emojiFor(e.id)}</div>
+      <div class="card-body">
+        <div class="name">${escapeHtml(e.name)}</div>
+        <div class="when">${fmtTime(e.startAt)}${where ? " · " + escapeHtml(where) : ""}</div>
         ${badge}
       </div>`;
     return a;
   }
 
-  function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  }
-
-  function render(events) {
+  function renderEvents(events) {
     const near = events.filter((e) => !e.isSoldOut && e.isNearCapacity);
     const open = events.filter((e) => !e.isSoldOut && !e.isNearCapacity);
-    const sold = events.filter((e) => e.isSoldOut).slice(0, 8);
-
+    const sold = events.filter((e) => e.isSoldOut).slice(0, 10);
+    $("count-near").textContent = near.length;
+    $("count-open").textContent = open.length;
+    $("count-sold").textContent = sold.length;
     for (const [id, list] of [["near", near], ["open", open], ["sold", sold]]) {
       const el = $(id);
       el.innerHTML = "";
-      if (!list.length) {
-        el.innerHTML = '<p class="empty">Nothing here right now.</p>';
-        continue;
-      }
-      list.slice(0, 20).forEach((e) => el.appendChild(eventCard(e)));
+      if (!list.length) { el.innerHTML = '<p class="empty">Nothing here right now 🤍</p>'; continue; }
+      list.slice(0, 20).forEach((e, i) => el.appendChild(eventCard(e, i)));
     }
   }
 
   async function loadEvents(force) {
-    $("refresh").disabled = true;
-    $("refresh").textContent = "Running…";
-    $("notice").textContent = "";
+    const fab = $("refresh");
+    fab.classList.add("spin");
     try {
       const res = await fetch(`/api/events${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      render(data.events);
-      $("updated").textContent = `Last checked ${timeAgo(data.updatedAt)}${data.fromCache ? " (cached)" : ""}`;
-      if (force && data.fromCache) {
-        $("notice").textContent = "Checked very recently, showing the cached result to go easy on Luma's servers.";
+      renderEvents(data.events);
+      $("updated").textContent = `Last checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : ""}`;
+      if (force) {
+        sfx.success();
+        toast(data.fromCache ? "Checked very recently, showing cached results to go easy on Luma." : "Fresh sweep done ✨");
       }
     } catch (err) {
-      $("notice").textContent = err.message || "Something went wrong.";
+      toast(err.message || "Something went wrong.");
     } finally {
-      $("refresh").disabled = false;
-      $("refresh").textContent = "Run the sweep now";
+      fab.classList.remove("spin");
     }
   }
 
@@ -228,21 +309,30 @@
     const data = await res.json();
     const el = $("perks");
     el.innerHTML = "";
-    data.perks.forEach((p) => {
+    data.perks.forEach((p, i) => {
       const a = document.createElement("a");
-      a.className = "card";
-      a.href = p.url;
-      a.target = "_blank";
-      a.rel = "noreferrer";
-      a.innerHTML = `
-        <div class="name">${escapeHtml(p.name)}</div>
-        <div class="perk-offer">${escapeHtml(p.offer)}${p.note ? " — " + escapeHtml(p.note) : ""}</div>`;
+      a.className = "perk-card";
+      a.style.animationDelay = `${i * 0.05}s`;
+      a.href = p.url; a.target = "_blank"; a.rel = "noreferrer";
+      a.addEventListener("click", () => sfx.tap());
+      a.innerHTML = `<div class="perk-name">🌷 ${escapeHtml(p.name)}</div><div class="perk-offer">${escapeHtml(p.offer)}${p.note ? " — " + escapeHtml(p.note) : ""}</div>`;
       el.appendChild(a);
     });
     $("footer").textContent = `Perks list hand-checked as of ${data.verifiedOn}.`;
   }
 
-  $("refresh").addEventListener("click", () => loadEvents(true));
+  // tabs
+  document.getElementById("chips").addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".chip");
+    if (!btn) return;
+    sfx.tap();
+    document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+    btn.classList.add("active");
+    ["near", "open", "sold", "perks"].forEach((id) => { $(id).hidden = id !== btn.dataset.tab; });
+  });
+
+  $("refresh").addEventListener("click", () => { sfx.whoosh(); loadEvents(true); });
+
   loadEvents(false);
   loadPerks();
 </script>
