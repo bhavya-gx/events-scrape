@@ -1,0 +1,13 @@
+{
+  "name": "sf-perks-sweep",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public demo: live SF AI events from Luma (spots remaining, sold out, near capacity) plus curated free perks. No API keys, no login.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

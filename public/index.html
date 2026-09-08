@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SF perks + AI events sweep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink: #FF2D78;
+    --purple: #7B5CFF;
+    --yellow: #FFC93C;
+    --mint: #2BD4A8;
+    --ink: #17131F;
+    --muted: #6b6478;
+    --bg: #FFFDF8;
+    --card: #ffffff;
+    --border: #EDE7F6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Poppins", system-ui, sans-serif;
+  }
+  header {
+    padding: 28px 20px 16px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 16px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  button {
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 20px;
+    background: var(--pink);
+    color: white;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.6; cursor: default; }
+  .meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 8px 20px 60px;
+  }
+  section { margin-top: 28px; }
+  h2 {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--purple);
+    margin: 0 0 10px;
+  }
+  .card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  a.card:hover { border-color: var(--pink); }
+  .card-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .name { font-weight: 700; font-size: 15px; }
+  .when { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge.open { background: color-mix(in srgb, var(--mint) 18%, white); color: #0e7a5f; }
+  .badge.near { background: color-mix(in srgb, var(--yellow) 30%, white); color: #8a5a00; }
+  .badge.sold { background: #f1eef7; color: var(--muted); }
+  .empty, .error { font-size: 14px; color: var(--muted); padding: 20px 0; }
+  .perk-offer { font-size: 13px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  footer {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>SF perks + AI events sweep 🩵</h1>
+  <p class="sub">
+    A demo agent: it reads Luma's live San Francisco AI events board (real spots-remaining and sold-out
+    status, not guesses) and pairs it with a hand-checked list of free perks around the city. No account, no keys.
+  </p>
+  <div class="row">
+    <button id="refresh">Run the sweep now</button>
+    <span class="meta" id="updated">Loading…</span>
+  </div>
+  <p class="meta" id="notice" style="margin-top:8px;"></p>
+</header>
+
+<main>
+  <section>
+    <h2>Register today, near capacity</h2>
+    <div id="near"></div>
+  </section>
+  <section>
+    <h2>Open now</h2>
+    <div id="open"></div>
+  </section>
+  <section>
+    <h2>Sold out (for reference)</h2>
+    <div id="sold"></div>
+  </section>
+  <section>
+    <h2>Free perks near SF</h2>
+    <div id="perks"></div>
+  </section>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const fmtTime = (iso) => new Date(iso).toLocaleString("en-US", {
+    weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+  });
+  const timeAgo = (ms) => {
+    const min = Math.round((Date.now() - ms) / 60000);
+    if (min < 1) return "just now";
+    if (min < 60) return `${min} min ago`;
+    return `${Math.round(min / 60)} hr ago`;
+  };
+
+  function eventCard(e) {
+    const badge = e.isSoldOut
+      ? '<span class="badge sold">Sold out</span>'
+      : e.isNearCapacity
+      ? `<span class="badge near">${e.spotsRemaining != null ? e.spotsRemaining + " spots left" : "Near capacity"}</span>`
+      : '<span class="badge open">Open</span>';
+    const where = [e.neighborhood, e.isFree ? "Free" : e.price].filter(Boolean).join(" · ");
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = e.url || "#";
+    a.target = "_blank";
+    a.rel = "noreferrer";
+    a.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="name">${escapeHtml(e.name)}</div>
+          <div class="when">${fmtTime(e.startAt)}${where ? " · " + escapeHtml(where) : ""}</div>
+        </div>
+        ${badge}
+      </div>`;
+    return a;
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function render(events) {
+    const near = events.filter((e) => !e.isSoldOut && e.isNearCapacity);
+    const open = events.filter((e) => !e.isSoldOut && !e.isNearCapacity);
+    const sold = events.filter((e) => e.isSoldOut).slice(0, 8);
+
+    for (const [id, list] of [["near", near], ["open", open], ["sold", sold]]) {
+      const el = $(id);
+      el.innerHTML = "";
+      if (!list.length) {
+        el.innerHTML = '<p class="empty">Nothing here right now.</p>';
+        continue;
+      }
+      list.slice(0, 20).forEach((e) => el.appendChild(eventCard(e)));
+    }
+  }
+
+  async function loadEvents(force) {
+    $("refresh").disabled = true;
+    $("refresh").textContent = "Running…";
+    $("notice").textContent = "";
+    try {
+      const res = await fetch(`/api/events${force ? "?refresh=1" : ""}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      render(data.events);
+      $("updated").textContent = `Last checked ${timeAgo(data.updatedAt)}${data.fromCache ? " (cached)" : ""}`;
+      if (force && data.fromCache) {
+        $("notice").textContent = "Checked very recently, showing the cached result to go easy on Luma's servers.";
+      }
+    } catch (err) {
+      $("notice").textContent = err.message || "Something went wrong.";
+    } finally {
+      $("refresh").disabled = false;
+      $("refresh").textContent = "Run the sweep now";
+    }
+  }
+
+  async function loadPerks() {
+    const res = await fetch("/api/perks");
+    const data = await res.json();
+    const el = $("perks");
+    el.innerHTML = "";
+    data.perks.forEach((p) => {
+      const a = document.createElement("a");
+      a.className = "card";
+      a.href = p.url;
+      a.target = "_blank";
+      a.rel = "noreferrer";
+      a.innerHTML = `
+        <div class="name">${escapeHtml(p.name)}</div>
+        <div class="perk-offer">${escapeHtml(p.offer)}${p.note ? " — " + escapeHtml(p.note) : ""}</div>`;
+      el.appendChild(a);
+    });
+    $("footer").textContent = `Perks list hand-checked as of ${data.verifiedOn}.`;
+  }
+
+  $("refresh").addEventListener("click", () => loadEvents(true));
+  loadEvents(false);
+  loadPerks();
+</script>
+</body>
+</html>
