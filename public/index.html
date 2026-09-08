@@ -133,6 +133,14 @@
   .badge.open { background: color-mix(in srgb, var(--mint) 16%, white); color: #0e7a5f; }
   .badge.sold { background: #f1eef7; color: var(--muted); }
 
+  .card-foot { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+  .avatars { display: flex; }
+  .avatars img {
+    width: 22px; height: 22px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--card); margin-left: -8px; background: var(--lavender);
+  }
+  .avatars img:first-child { margin-left: 0; }
+
   .empty { font-size: 13.5px; color: var(--muted); padding: 30px 4px; text-align: center; }
 
   .perk-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 16px; margin-bottom: 12px; display: block; text-decoration: none; color: inherit; opacity: 0; transform: translateY(14px); animation: rise 0.5s cubic-bezier(.2,.8,.2,1) forwards; }
@@ -178,6 +186,7 @@
       <button class="chip active" data-tab="near">🔥 Near capacity <span class="n" id="count-near">–</span></button>
       <button class="chip" data-tab="open">✨ Open now <span class="n" id="count-open">–</span></button>
       <button class="chip" data-tab="sold">💤 Sold out <span class="n" id="count-sold">–</span></button>
+      <button class="chip" data-tab="funcheap">🎈 Free & fun <span class="n" id="count-funcheap">–</span></button>
       <button class="chip" data-tab="perks">🌷 Perks</button>
     </div>
   </div>
@@ -188,6 +197,7 @@
   <div id="near"></div>
   <div id="open" hidden></div>
   <div id="sold" hidden></div>
+  <div id="funcheap" hidden></div>
   <div id="perks" hidden></div>
 </main>
 
@@ -259,12 +269,15 @@
     a.rel = "noreferrer";
     a.addEventListener("click", () => sfx.tap());
     const thumbStyle = e.coverUrl ? `style="background-image:url('${e.coverUrl}')"` : "";
+    const avatars = (e.hostAvatars ?? []).length
+      ? `<span class="avatars">${e.hostAvatars.map((src) => `<img src="${src}" alt="" loading="lazy" />`).join("")}</span>`
+      : "";
     a.innerHTML = `
       <div class="thumb" ${thumbStyle}>${e.coverUrl ? "" : emojiFor(e.id)}</div>
       <div class="card-body">
         <div class="name">${escapeHtml(e.name)}</div>
         <div class="when">${fmtTime(e.startAt)}${where ? " · " + escapeHtml(where) : ""}</div>
-        ${badge}
+        <div class="card-foot">${badge}${avatars}</div>
       </div>`;
     return a;
   }
@@ -304,6 +317,38 @@
     }
   }
 
+  function funcheapCard(p, i) {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.style.animationDelay = `${Math.min(i, 8) * 0.045}s`;
+    a.href = p.url; a.target = "_blank"; a.rel = "noreferrer";
+    a.addEventListener("click", () => sfx.tap());
+    const thumbStyle = p.image ? `style="background-image:url('${p.image}')"` : "";
+    const when = [p.date, p.cost].filter(Boolean).join(" · ") || p.excerpt;
+    a.innerHTML = `
+      <div class="thumb" ${thumbStyle}>${p.image ? "" : "🎈"}</div>
+      <div class="card-body">
+        <div class="name">${escapeHtml(p.name)}</div>
+        <div class="when">${escapeHtml(when)}</div>
+      </div>`;
+    return a;
+  }
+
+  async function loadFuncheap() {
+    try {
+      const res = await fetch("/api/funcheap");
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      $("count-funcheap").textContent = data.posts.length;
+      const el = $("funcheap");
+      el.innerHTML = "";
+      if (!data.posts.length) { el.innerHTML = '<p class="empty">Nothing here right now 🤍</p>'; return; }
+      data.posts.forEach((p, i) => el.appendChild(funcheapCard(p, i)));
+    } catch {
+      $("funcheap").innerHTML = '<p class="empty">Could not reach Funcheap right now.</p>';
+    }
+  }
+
   async function loadPerks() {
     const res = await fetch("/api/perks");
     const data = await res.json();
@@ -328,12 +373,13 @@
     sfx.tap();
     document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
     btn.classList.add("active");
-    ["near", "open", "sold", "perks"].forEach((id) => { $(id).hidden = id !== btn.dataset.tab; });
+    ["near", "open", "sold", "funcheap", "perks"].forEach((id) => { $(id).hidden = id !== btn.dataset.tab; });
   });
 
   $("refresh").addEventListener("click", () => { sfx.whoosh(); loadEvents(true); });
 
   loadEvents(false);
+  loadFuncheap();
   loadPerks();
 </script>
 </body>
