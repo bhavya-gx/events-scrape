@@ -10,51 +10,46 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg: #FFFFFF;
-    --ink: #111114;
-    --text: #1C1C21;
-    --muted: #8A8A93;
-    --faint: #C9C9D1;
-    --chip: #F2F2F6;
-    --line: #EDEDF1;
-    --blue: #2F7DF6;
-    --blue-soft: #E9F1FF;
-    --green: #1FA971;
-    --green-soft: #E6F7EF;
-    --pink: #FF2D78;
-    --pink-soft: #FFE8F0;
-    --shadow-card: 0 10px 30px rgba(20, 20, 30, 0.08);
-    --shadow-nav: 0 14px 34px rgba(20, 20, 30, 0.16);
-    --r-lg: 24px;
-    --r-md: 18px;
-    --ease-out: cubic-bezier(.2, .8, .2, 1);
-    --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+    --bg: #FFFFFF; --ink: #111114; --text: #1C1C21; --muted: #8A8A93; --faint: #C9C9D1;
+    --chip: #F2F2F6; --line: #EDEDF1;
+    --blue: #2F7DF6; --blue-soft: #E9F1FF; --green: #1FA971; --green-soft: #E6F7EF;
+    --pink: #FF2D78; --pink-soft: #FFE8F0;
+    --shadow-card: 0 10px 30px rgba(20, 20, 30, 0.08); --shadow-nav: 0 14px 34px rgba(20, 20, 30, 0.16);
+    --r-lg: 24px; --r-md: 18px;
+    --ease-out: cubic-bezier(.2, .8, .2, 1); --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: "Poppins", -apple-system, system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased; padding-bottom: 118px;
-  }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Poppins", -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding-bottom: 118px; overflow-x: hidden; }
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; }
   .wrap { max-width: 560px; margin: 0 auto; padding: 0 20px; }
 
+  /* ---------- entrance + scroll-reveal motion ---------- */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(40px) scale(0.96); } to { opacity: 1; transform: none; } }
+  @keyframes popIn { 0% { opacity: 0; transform: scale(0.6); } 70% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(47,125,246,0.45), var(--shadow-nav); } 100% { box-shadow: 0 0 0 26px rgba(47,125,246,0), var(--shadow-nav); } }
+  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  @keyframes kenburns { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
+  @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10% { transform: rotate(14deg); } 20% { transform: rotate(-8deg); } 30% { transform: rotate(14deg); } 40% { transform: rotate(-4deg); } }
+
+  .boot { opacity: 0; animation: fadeUp 0.6s var(--ease-out) forwards; }
+  .boot.d1 { animation-delay: 0.05s; } .boot.d2 { animation-delay: 0.14s; } .boot.d3 { animation-delay: 0.22s; } .boot.d4 { animation-delay: 0.3s; }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+
   /* ---------- header ---------- */
   header { padding: 22px 0 6px; }
   .top { display: flex; align-items: center; gap: 12px; }
-  .me {
-    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, #FF9AC4, #7B5CFF); display: grid; place-items: center;
-    font-size: 17px; box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px var(--line);
-  }
+  .me { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #FF9AC4, #7B5CFF); display: grid; place-items: center; font-size: 17px; box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px var(--line); }
   .hello { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; margin: 0; flex: 1; min-width: 0; }
-  .iconbtn {
-    width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--chip);
-    display: grid; place-items: center; color: var(--ink);
-    transition: transform 0.18s var(--ease-pop), background 0.18s ease;
-  }
+  .hello .wave { display: inline-block; animation: wave 2.6s ease-in-out 1s infinite; transform-origin: 70% 70%; }
+  .iconbtn { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--chip); display: grid; place-items: center; color: var(--ink); transition: transform 0.18s var(--ease-pop), background 0.18s ease; }
+  .iconbtn:hover { background: #E9E9EF; }
   .iconbtn:active { transform: scale(0.9); }
   .iconbtn[aria-pressed="false"] { color: var(--muted); }
   .iconbtn svg { width: 18px; height: 18px; }
@@ -68,34 +63,30 @@
   .sh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .sh h2 { font-size: 17px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
   .sh .sub { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
-  .chev {
-    width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--chip);
-    display: grid; place-items: center; color: var(--ink); flex-shrink: 0;
-    transition: transform 0.18s var(--ease-pop);
-  }
+  .chev { width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--chip); display: grid; place-items: center; color: var(--ink); flex-shrink: 0; transition: transform 0.18s var(--ease-pop), background 0.18s ease; }
+  .chev:hover { background: #E9E9EF; }
   .chev:active { transform: scale(0.88); }
   .chev svg { width: 14px; height: 14px; }
   .sh.faint h2 { color: var(--faint); }
   .sh.faint .chev { background: #F7F7F9; color: var(--faint); }
 
-  /* rail of big square photo cards, pin + avatars under each */
-  .rail {
-    display: flex; gap: 14px; overflow-x: auto; padding: 14px 20px 6px; margin: 0 -20px;
-    scroll-snap-type: x mandatory; scrollbar-width: none;
-  }
+  .pill { font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 8px; white-space: nowrap; display: inline-block; animation: popIn 0.4s var(--ease-pop) both; }
+  .pill.blue { background: var(--blue-soft); color: var(--blue); }
+  .pill.green { background: var(--green-soft); color: var(--green); }
+  .pill.pink { background: var(--pink-soft); color: var(--pink); }
+  .pill.gray { background: var(--chip); color: var(--muted); }
+  .pill.bump { animation: bump 0.45s var(--ease-pop); }
+
+  /* rail: big square photo tiles, pin + avatars underneath */
+  .rail { display: flex; gap: 14px; overflow-x: auto; padding: 14px 20px 6px; margin: 0 -20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .rail::-webkit-scrollbar { display: none; }
-  .tile { flex: 0 0 186px; scroll-snap-align: start; }
-  .tile .ph {
-    display: block; width: 186px; height: 186px; border-radius: var(--r-lg); overflow: hidden;
-    background: var(--chip); position: relative; box-shadow: var(--shadow-card);
-  }
-  .tile .ph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--ease-out); }
-  .tile .ph:hover img { transform: scale(1.04); }
+  .tile { flex: 0 0 186px; scroll-snap-align: start; opacity: 0; animation: slideIn 0.6s var(--ease-out) forwards; }
+  .tile .ph { display: block; width: 186px; height: 186px; border-radius: var(--r-lg); overflow: hidden; background: var(--chip); position: relative; box-shadow: var(--shadow-card); transition: transform 0.25s var(--ease-pop), box-shadow 0.25s ease; }
+  .tile .ph:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(20,20,30,0.14); }
+  .tile .ph:active { transform: scale(0.97); }
+  .tile .ph img { width: 100%; height: 100%; object-fit: cover; display: block; animation: kenburns 14s ease-in-out infinite alternate; }
   .tile .ph .fb { position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; }
-  .tile .ph .time {
-    position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92);
-    color: var(--ink); font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 999px;
-  }
+  .tile .ph .time { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92); color: var(--ink); font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 999px; animation: popIn 0.5s var(--ease-pop) 0.25s both; }
   .tile .ph .time.hot { background: var(--pink); color: #fff; }
   .under { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; padding: 0 2px; }
   .under .where { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; min-width: 0; }
@@ -104,76 +95,54 @@
   .tile .name { font-size: 13px; font-weight: 600; margin: 6px 2px 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
   .stack { display: flex; align-items: center; flex-shrink: 0; }
-  .stack img, .stack .more {
-    width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
-    border: 2px solid #fff; margin-left: -9px; background: var(--chip);
-  }
+  .stack img, .stack .more { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-left: -9px; background: var(--chip); animation: popIn 0.45s var(--ease-pop) both; }
+  .stack img:nth-child(2), .stack .more:nth-child(2) { animation-delay: 0.08s; }
+  .stack img:nth-child(3), .stack .more:nth-child(3) { animation-delay: 0.16s; }
   .stack img:first-child, .stack .more:first-child { margin-left: 0; }
   .stack .more { display: grid; place-items: center; font-size: 9.5px; font-weight: 700; background: var(--ink); color: #fff; }
 
-  /* horizontal "TagAlong" cards */
+  /* row cards */
   .list { display: grid; gap: 14px; margin-top: 14px; }
-  .hc {
-    display: flex; gap: 12px; background: #fff; border-radius: var(--r-lg); padding: 12px;
-    box-shadow: var(--shadow-card); position: relative;
-    opacity: 0; transform: translateY(12px); animation: rise 0.5s var(--ease-out) forwards;
-    transition: transform 0.15s ease;
-  }
+  .day { font-size: 12px; font-weight: 600; color: var(--muted); margin: 6px 2px -4px; letter-spacing: 0.02em; text-transform: uppercase; }
+  .day.today { color: var(--blue); }
+  .hc { display: flex; gap: 12px; background: #fff; border-radius: var(--r-lg); padding: 12px; box-shadow: var(--shadow-card); position: relative; transition: transform 0.2s var(--ease-pop), box-shadow 0.25s ease; }
+  .hc:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(20,20,30,0.12); }
   .hc.pressed { transform: scale(0.985); }
-  @keyframes rise { to { opacity: 1; transform: none; } }
-  .hc .ph {
-    flex: 0 0 122px; height: 122px; border-radius: var(--r-md); overflow: hidden; position: relative; background: var(--chip);
-  }
-  .hc .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hc .ph { flex: 0 0 122px; height: 122px; border-radius: var(--r-md); overflow: hidden; position: relative; background: var(--chip); }
+  .hc .ph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease-out); }
+  .hc:hover .ph img { transform: scale(1.06); }
   .hc .ph .fb { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; }
-  .hc .ph .pin {
-    position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px);
-    background: rgba(255,255,255,0.94); color: var(--ink); font-size: 10px; font-weight: 600;
-    padding: 4px 8px; border-radius: 999px; display: flex; align-items: center; gap: 4px;
-    white-space: nowrap; overflow: hidden;
-  }
+  .hc .ph .pin { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); background: rgba(255,255,255,0.94); color: var(--ink); font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 999px; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; animation: popIn 0.5s var(--ease-pop) 0.2s both; }
   .hc .ph .pin svg { width: 11px; height: 11px; flex-shrink: 0; }
   .hc .ph .pin span { overflow: hidden; text-overflow: ellipsis; }
   .hc .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 2px 4px 2px 0; }
   .hc .title { font-size: 15px; font-weight: 600; line-height: 1.25; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .hc .desc { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .hc .foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .pill { font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 8px; white-space: nowrap; }
-  .pill.blue { background: var(--blue-soft); color: var(--blue); }
-  .pill.green { background: var(--green-soft); color: var(--green); }
-  .pill.pink { background: var(--pink-soft); color: var(--pink); }
-  .pill.gray { background: var(--chip); color: var(--muted); }
   .hc .stack img, .hc .stack .more { width: 22px; height: 22px; margin-left: -8px; }
   .hc .stack img:first-child, .hc .stack .more:first-child { margin-left: 0; }
   .hc .go { position: absolute; inset: 0; border-radius: var(--r-lg); }
   .hc .body, .hc .ph { position: relative; z-index: 1; pointer-events: none; }
 
-  .more-btn {
-    margin-top: 14px; width: 100%; border: 1px solid var(--line); background: #fff; color: var(--ink);
-    font-size: 13px; font-weight: 600; padding: 12px; border-radius: 14px;
-  }
+  .more-btn { margin-top: 14px; width: 100%; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 13px; font-weight: 600; padding: 12px; border-radius: 14px; transition: transform 0.18s var(--ease-pop), background 0.18s ease; }
+  .more-btn:hover { background: #FAFAFC; }
   .more-btn:active { transform: scale(0.98); }
   .state { padding: 22px 16px; text-align: center; background: #FAFAFC; border-radius: var(--r-lg); margin-top: 14px; }
   .rail .state { flex: 1; margin-top: 0; }
-  .state .big { font-size: 30px; display: block; margin-bottom: 6px; }
+  .state .big { font-size: 30px; display: block; margin-bottom: 6px; animation: floaty 3s ease-in-out infinite; }
   .state h3 { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
   .state p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.5; }
-  .state code { font-family: ui-monospace, monospace; font-size: 11px; background: var(--chip); padding: 1px 5px; border-radius: 5px; }
   .state .btn { margin-top: 12px; }
-  .btn {
-    border: none; background: var(--ink); color: #fff; font-size: 13px; font-weight: 600;
-    padding: 11px 16px; border-radius: 999px; transition: transform 0.18s var(--ease-pop);
-    display: inline-flex; align-items: center; gap: 8px;
-  }
+  .btn { border: none; background: var(--ink); color: #fff; font-size: 13px; font-weight: 600; padding: 11px 16px; border-radius: 999px; transition: transform 0.18s var(--ease-pop); display: inline-flex; align-items: center; gap: 8px; }
   .btn:active { transform: scale(0.95); }
+  .btn.busy svg { animation: spin 0.9s linear infinite; }
+  .btn svg { width: 16px; height: 16px; }
   .skel { display: flex; gap: 12px; padding: 12px; border-radius: var(--r-lg); box-shadow: var(--shadow-card); }
   .skel .b { background: linear-gradient(90deg, #F2F2F6 25%, #FAFAFC 50%, #F2F2F6 75%); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; border-radius: 12px; }
   .skel .b.ph { flex: 0 0 122px; height: 122px; border-radius: var(--r-md); }
   .skel .col { flex: 1; display: grid; gap: 10px; align-content: start; padding-top: 6px; }
   .skel .b.l1 { height: 16px; width: 80%; } .skel .b.l2 { height: 12px; width: 60%; } .skel .b.l3 { height: 22px; width: 38%; }
-  @keyframes shimmer { to { background-position: -200% 0; } }
 
-  /* sold-out drawer, faded like "Saved Destinations" */
   details.faded summary { list-style: none; cursor: pointer; }
   details.faded summary::-webkit-details-marker { display: none; }
   details.faded[open] .sh.faint h2 { color: var(--ink); }
@@ -182,60 +151,36 @@
   footer { margin-top: 30px; font-size: 11.5px; color: var(--muted); line-height: 1.5; }
   footer a { text-decoration: underline; text-underline-offset: 2px; }
 
-  /* ---------- floating pill nav with detached + ---------- */
-  .navwrap {
-    position: fixed; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 40;
-    display: flex; justify-content: center; gap: 12px; padding: 0 20px; pointer-events: none;
-  }
-  .nav {
-    pointer-events: auto; display: flex; align-items: center; gap: 6px;
-    background: #fff; border-radius: 999px; padding: 8px; box-shadow: var(--shadow-nav);
-  }
-  .nav button {
-    width: 46px; height: 46px; border-radius: 50%; border: none; background: transparent;
-    display: grid; place-items: center; color: var(--muted); position: relative;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.18s var(--ease-pop);
-  }
+  /* ---------- floating pill nav with detached circle ---------- */
+  .navwrap { position: fixed; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 40; display: flex; justify-content: center; gap: 12px; padding: 0 20px; pointer-events: none; animation: fadeUp 0.7s var(--ease-out) 0.35s both; }
+  .nav { pointer-events: auto; display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 999px; padding: 8px; box-shadow: var(--shadow-nav); }
+  .nav button { width: 46px; height: 46px; border-radius: 50%; border: none; background: transparent; display: grid; place-items: center; color: var(--muted); position: relative; transition: background 0.25s ease, color 0.25s ease, transform 0.2s var(--ease-pop); }
   .nav button svg { width: 20px; height: 20px; }
-  .nav button.on { background: var(--ink); color: #fff; }
+  .nav button.on { background: var(--ink); color: #fff; animation: bump 0.4s var(--ease-pop); }
   .nav button:active { transform: scale(0.9); }
-  .nav button .badge {
-    position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px;
-    border-radius: 999px; background: var(--blue); color: #fff; font-size: 9.5px; font-weight: 700;
-    display: grid; place-items: center; border: 2px solid #fff;
-  }
-  .plus {
-    pointer-events: auto; width: 62px; height: 62px; border-radius: 50%; border: none;
-    background: #fff; color: var(--ink); display: grid; place-items: center; box-shadow: var(--shadow-nav);
-    transition: transform 0.2s var(--ease-pop), background 0.2s ease, color 0.2s ease;
-  }
+  .nav button .badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 9.5px; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff; animation: popIn 0.4s var(--ease-pop) both; }
+  .plus { pointer-events: auto; width: 62px; height: 62px; border-radius: 50%; border: none; background: #fff; color: var(--ink); display: grid; place-items: center; box-shadow: var(--shadow-nav); animation: floaty 3.4s ease-in-out infinite; transition: transform 0.2s var(--ease-pop), background 0.25s ease, color 0.25s ease; }
   .plus svg { width: 22px; height: 22px; }
   .plus:active { transform: scale(0.9); }
-  .plus.busy { background: var(--ink); color: #fff; }
+  .plus.busy { background: var(--ink); color: #fff; animation: none; }
   .plus.busy svg { animation: spin 0.9s linear infinite; }
-  .plus.done { background: var(--blue); color: #fff; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .plus.done { background: var(--blue); color: #fff; animation: ring 0.9s ease-out; }
 
-  .toast {
-    position: fixed; left: 50%; bottom: 100px; transform: translate(-50%, 10px);
-    background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 500;
-    padding: 10px 16px; border-radius: 999px; opacity: 0; pointer-events: none; z-index: 50;
-    transition: opacity 0.25s ease, transform 0.25s ease; max-width: 82vw; text-align: center;
-  }
-  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast { position: fixed; left: 50%; bottom: 100px; transform: translate(-50%, 14px) scale(0.96); background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 500; padding: 10px 16px; border-radius: 999px; opacity: 0; pointer-events: none; z-index: 50; transition: opacity 0.3s ease, transform 0.35s var(--ease-pop); max-width: 82vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .hc { opacity: 1; transform: none; }
+    .boot, .tile, .reveal, .pill, .stack img, .stack .more { opacity: 1 !important; transform: none !important; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="top">
+    <div class="top boot">
       <div class="me" aria-hidden="true">🌉</div>
-      <h1 class="hello">Hello there</h1>
+      <h1 class="hello">Hello there <span class="wave">👋</span></h1>
       <button class="iconbtn" id="soundToggle" aria-label="Toggle sound effects" aria-pressed="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
       </button>
@@ -243,21 +188,21 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
       </button>
     </div>
-    <p class="lede">Live SF events with real spots remaining, free picks around the city, and hand-checked perks. No account needed.</p>
-    <div class="status"><span class="dot" id="dot"></span><span id="updated">Checking…</span></div>
+    <p class="lede boot d1">Live SF events with real spots remaining, free things to do around the city, and hand-checked perks. No account needed.</p>
+    <div class="status boot d2"><span class="dot" id="dot"></span><span id="updated">Checking…</span></div>
   </header>
 
-  <section id="soon">
+  <section id="soon" class="boot d3">
     <div class="sh">
       <h2>Happening soon</h2>
-      <button class="chev" type="button" data-jump="open" aria-label="See all open events">
+      <button class="chev" type="button" data-jump="month" aria-label="See everything this month">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
       </button>
     </div>
     <div class="rail" id="railSoon"></div>
   </section>
 
-  <section id="near">
+  <section id="near" class="boot d4">
     <div class="sh">
       <div><h2>#AlmostFull</h2><p class="sub">Grab a spot before it's gone</p></div>
       <span class="pill blue" id="nearCount">–</span>
@@ -265,47 +210,25 @@
     <div class="list" id="listNear"></div>
   </section>
 
-  <section id="open">
-    <div class="sh">
-      <div><h2>Open now</h2><p class="sub">Luma events with room, next 30 days</p></div>
-      <span class="pill gray" id="openCount">–</span>
+  <section id="month">
+    <div class="sh reveal">
+      <div><h2>This month</h2><p class="sub">Everything with a date, soonest first</p></div>
+      <span class="pill gray" id="monthCount">–</span>
     </div>
-    <div class="list" id="listOpen"></div>
+    <div class="list" id="listMonth"></div>
+    <button class="more-btn" id="findMore" type="button">Find more around town</button>
   </section>
 
-  <section id="funcheap">
-    <div class="sh">
-      <div><h2>Free &amp; fun</h2><p class="sub">Funcheap's latest picks</p></div>
-      <span class="pill gray" id="funCount">–</span>
+  <section id="anytime">
+    <div class="sh reveal">
+      <div><h2>Anytime this week</h2><p class="sub">Ongoing and drop-in, no fixed date</p></div>
+      <span class="pill gray" id="anytimeCount">–</span>
     </div>
-    <div class="list" id="listFun"></div>
-  </section>
-
-  <section id="instagram">
-    <div class="sh">
-      <div><h2>Spotted on Instagram</h2><p class="sub" id="igSub">Events pulled from SF accounts, loads only when you ask</p></div>
-      <span class="pill gray" id="igCount">–</span>
-    </div>
-    <div class="list" id="listIg">
-      <div class="state">
-        <span class="big">📸</span>
-        <h3>Not loaded yet</h3>
-        <p>This one reads a handful of SF accounts and costs a little to run, so it only fetches when someone asks.</p>
-        <button class="btn" type="button" id="igLoad">Show Instagram finds</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="tm">
-    <div class="sh">
-      <div><h2>Concerts &amp; shows</h2><p class="sub">Ticketed, via Ticketmaster</p></div>
-      <span class="pill gray" id="tmCount">–</span>
-    </div>
-    <div class="list" id="listTm"></div>
+    <div class="list" id="listAnytime"></div>
   </section>
 
   <section id="perks">
-    <div class="sh">
+    <div class="sh reveal">
       <div><h2>Free perks</h2><p class="sub" id="perksSub">Hand-checked free admission</p></div>
       <span class="pill green" id="perksCount">–</span>
     </div>
@@ -316,7 +239,7 @@
     <details class="faded">
       <summary>
         <div class="sh faint">
-          <h2>Sold out already</h2>
+          <h2 id="soldTitle">Sold out already</h2>
           <span class="chev" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
           </span>
@@ -326,7 +249,7 @@
     </details>
   </section>
 
-  <footer id="footer"></footer>
+  <footer id="footer" class="reveal"></footer>
 </div>
 
 <div class="navwrap">
@@ -334,9 +257,9 @@
     <button type="button" class="on" data-nav="top" aria-label="Home">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
     </button>
-    <button type="button" data-nav="open" aria-label="Discover events">
+    <button type="button" data-nav="month" aria-label="This month">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15 9-2 6-4 2 2-6z"/></svg>
-      <span class="badge" id="navOpenBadge" hidden></span>
+      <span class="badge" id="navBadge" hidden></span>
     </button>
     <button type="button" data-nav="perks" aria-label="Free perks">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v12H4z"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12"/></svg>
@@ -351,25 +274,14 @@
 <script>
   const $ = (id) => document.getElementById(id);
   const PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  const REFRESH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
   const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const hashStr = (s) => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
-  const timeAgo = (ms) => {
-    const min = Math.round((Date.now() - ms) / 60000);
-    if (min < 1) return "just now";
-    if (min < 60) return `${min} min ago`;
-    const hr = Math.round(min / 60);
-    return hr < 24 ? `${hr} hr ago` : `${Math.round(hr / 24)} d ago`;
-  };
+  const timeAgo = (ms) => { const min = Math.round((Date.now() - ms) / 60000); if (min < 1) return "just now"; if (min < 60) return `${min} min ago`; const hr = Math.round(min / 60); return hr < 24 ? `${hr} hr ago` : `${Math.round(hr / 24)} d ago`; };
   const clock = (iso) => new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-  function dayLabel(iso) {
-    const d = new Date(iso), now = new Date();
-    const a = new Date(d.getFullYear(), d.getMonth(), d.getDate()), b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const diff = Math.round((a - b) / 86400000);
-    if (diff === 0) return "Today";
-    if (diff === 1) return "Tomorrow";
-    return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-  }
-  const FALLBACK = ["🎤", "🤝", "🧑‍💻", "🎨", "☕", "🌉", "🎉", "🍽️"];
+  function dayDiff(iso) { const d = new Date(iso), n = new Date(); return Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 86400000); }
+  function dayLabel(iso) { const diff = dayDiff(iso); if (diff === 0) return "Today"; if (diff === 1) return "Tomorrow"; return new Date(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); }
+  const FALLBACK = ["🎤", "🤝", "🧑‍💻", "🎨", "☕", "🌉", "🎉", "🍽️", "🎈", "🌷"];
   const emojiFor = (seed) => FALLBACK[hashStr(seed) % FALLBACK.length];
 
   // ---------- sounds (Web Audio, no files) ----------
@@ -390,27 +302,24 @@
     whoosh() { this.tone({ freq: 280, to: 760, dur: 0.28, gain: 0.02 }); },
     success() { this.tone({ freq: 659, dur: 0.11, type: "triangle" }); this.tone({ freq: 880, dur: 0.13, type: "triangle", delay: 0.09 }); this.tone({ freq: 1175, dur: 0.2, type: "triangle", delay: 0.18 }); },
     error() { this.tone({ freq: 240, to: 170, dur: 0.22, type: "square", gain: 0.02 }); },
-    toggle() {
-      this.enabled = !this.enabled;
-      try { localStorage.setItem("sfx", this.enabled ? "on" : "off"); } catch {}
-      $("soundToggle").setAttribute("aria-pressed", String(this.enabled));
-      if (this.enabled) this.tap();
-    },
+    toggle() { this.enabled = !this.enabled; try { localStorage.setItem("sfx", this.enabled ? "on" : "off"); } catch {} $("soundToggle").setAttribute("aria-pressed", String(this.enabled)); if (this.enabled) this.tap(); },
   };
   $("soundToggle").setAttribute("aria-pressed", String(Sound.enabled));
   $("soundToggle").addEventListener("click", () => Sound.toggle());
 
   let toastTimer;
-  function toast(msg, ms = 2800) {
-    const el = $("toast"); el.textContent = msg; el.classList.add("show");
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), ms);
-  }
+  function toast(msg, ms = 2800) { const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), ms); }
   async function share(title, url) {
     Sound.tap();
     try { if (navigator.share) { await navigator.share({ title, url }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
     try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { toast("Could not copy the link."); }
   }
   $("shareTop").addEventListener("click", () => share(document.title, location.href.split("#")[0]));
+
+  // ---------- scroll reveal ----------
+  const revealer = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); revealer.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  const watchReveal = (el) => { el.classList.add("reveal"); revealer.observe(el); };
+  document.querySelectorAll(".reveal").forEach((el) => revealer.observe(el));
 
   // ---------- building blocks ----------
   function fillPhoto(box, src, seed, emoji) {
@@ -433,300 +342,234 @@
     ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => card.addEventListener(ev, () => card.classList.remove("pressed")));
   }
 
-  // big square rail tile (reference: photo, then pin + avatars underneath)
-  function railTile(e, i) {
+  function railTile(it, i) {
     const t = document.createElement("article");
     t.className = "tile";
-    const hot = !e.isSoldOut && e.isNearCapacity;
-    const where = [e.neighborhood, e.city].filter(Boolean).join(", ") || "San Francisco";
+    t.style.animationDelay = `${Math.min(i, 8) * 0.07}s`;
+    const hot = !it.isSoldOut && it.isNearCapacity;
     t.innerHTML = `
-      <a class="ph" href="${escapeHtml(e.url || "#")}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(e.name)}"></a>
+      <a class="ph" href="${escapeHtml(it.url || "#")}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(it.name)}"></a>
       <div class="under">
-        <span class="where">${PIN}<span>${escapeHtml(where)}</span></span>
-        ${stackHtml(e.hostAvatars, { max: 2 })}
+        <span class="where">${PIN}<span>${escapeHtml(it.place || "San Francisco")}</span></span>
+        ${stackHtml(it.avatars, { max: 2 })}
       </div>
-      <div class="name">${escapeHtml(e.name)}</div>`;
+      <div class="name">${escapeHtml(it.name)}</div>`;
     const ph = t.querySelector(".ph");
-    fillPhoto(ph, e.coverUrl, e.id);
+    fillPhoto(ph, it.image, it.id);
     const time = document.createElement("span");
     time.className = "time" + (hot ? " hot" : "");
-    time.textContent = hot && e.spotsRemaining != null ? `${e.spotsRemaining} left` : `${dayLabel(e.startAt)} · ${clock(e.startAt)}`;
+    time.textContent = hot && it.spotsRemaining != null ? `${it.spotsRemaining} left` : `${dayLabel(it.startAt)} · ${clock(it.startAt)}`;
     ph.appendChild(time);
     ph.addEventListener("click", () => Sound.tap());
     return t;
   }
 
-  // horizontal card (reference: "#TagAlong" row)
-  function hCard({ id, title, desc, photo, pinText, pill, pillCls = "blue", avatars, url, seed, emoji }, i) {
+  function card(it, i) {
     const c = document.createElement("article");
     c.className = "hc";
-    c.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    c.style.transitionDelay = `${Math.min(i, 6) * 0.05}s`;
+    const pill = it.pill;
     c.innerHTML = `
-      <a class="go" href="${escapeHtml(url || "#")}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(title)}"></a>
+      <a class="go" href="${escapeHtml(it.url || "#")}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(it.name)}"></a>
       <div class="ph"></div>
       <div class="body">
-        <h3 class="title">${escapeHtml(title)}</h3>
-        ${desc ? `<p class="desc">${escapeHtml(desc)}</p>` : ""}
+        <h3 class="title">${escapeHtml(it.name)}</h3>
+        ${it.desc ? `<p class="desc">${escapeHtml(it.desc)}</p>` : ""}
         <div class="foot">
-          ${pill ? `<span class="pill ${pillCls}">${escapeHtml(pill)}</span>` : "<span></span>"}
-          ${stackHtml(avatars, { max: 3 })}
+          ${pill ? `<span class="pill ${it.pillCls}">${escapeHtml(pill)}</span>` : "<span></span>"}
+          ${stackHtml(it.avatars, { max: 3 })}
         </div>
       </div>`;
     const ph = c.querySelector(".ph");
-    fillPhoto(ph, photo, seed || id, emoji);
-    if (pinText) ph.insertAdjacentHTML("beforeend", `<span class="pin">${PIN}<span>${escapeHtml(pinText)}</span></span>`);
+    fillPhoto(ph, it.image, it.id, it.emoji);
+    if (it.place) ph.insertAdjacentHTML("beforeend", `<span class="pin">${PIN}<span>${escapeHtml(it.place)}</span></span>`);
     c.querySelector(".go").addEventListener("click", () => Sound.tap());
     press(c);
+    watchReveal(c);
     return c;
   }
 
-  const lumaCard = (e, i) => hCard({
-    id: e.id,
-    title: e.name,
-    desc: `${dayLabel(e.startAt)} · ${clock(e.startAt)}${e.isFree ? " · Free" : e.price ? ` · ${e.price}` : ""}${e.requireApproval ? " · approval needed" : ""}`,
-    photo: e.coverUrl,
-    pinText: e.neighborhood || e.city || "SF",
-    pill: e.isSoldOut ? "Sold out" : e.isNearCapacity ? (e.spotsRemaining != null ? `${e.spotsRemaining} ${e.spotsRemaining === 1 ? "spot" : "spots"} left` : "Almost full") : (e.guestCount ? `${e.guestCount} going` : "Open"),
-    pillCls: e.isSoldOut ? "gray" : e.isNearCapacity ? "blue" : "green",
-    avatars: e.hostAvatars,
-    url: e.url,
-  }, i);
+  // ---------- one feed, three sources, no labels ----------
+  function fromLuma(e) {
+    const when = `${dayLabel(e.startAt)} · ${clock(e.startAt)}`;
+    return {
+      id: `l-${e.id}`, name: e.name, startAt: e.startAt, url: e.url, image: e.coverUrl,
+      place: e.neighborhood || e.city || null, avatars: e.hostAvatars,
+      isSoldOut: e.isSoldOut, isNearCapacity: e.isNearCapacity, spotsRemaining: e.spotsRemaining,
+      desc: `${when}${e.isFree ? " · Free" : e.price ? ` · ${e.price}` : ""}${e.requireApproval ? " · approval needed" : ""}`,
+      pill: e.isSoldOut ? "Sold out" : e.isNearCapacity ? (e.spotsRemaining != null ? `${e.spotsRemaining} ${e.spotsRemaining === 1 ? "spot" : "spots"} left` : "Almost full") : e.isFree ? "Free" : (e.guestCount ? `${e.guestCount} going` : "Open"),
+      pillCls: e.isSoldOut ? "gray" : e.isNearCapacity ? "blue" : e.isFree ? "green" : "blue",
+    };
+  }
+  function fromInstagram(e) {
+    const startAt = `${e.startDate}T${e.startTime || "12:00"}:00`;
+    const free = e.cost && /free/i.test(e.cost);
+    return {
+      id: `i-${e.id}`, name: e.name, startAt, url: e.sourceUrl, image: e.imageUrl, place: e.venue || null, avatars: [],
+      isSoldOut: false, isNearCapacity: false, spotsRemaining: null,
+      desc: `${dayLabel(startAt)}${e.startTime ? ` · ${clock(startAt)}` : ""}${e.oneLine ? ` · ${e.oneLine}` : ""}`,
+      pill: e.cost || "Open", pillCls: free ? "green" : "blue",
+    };
+  }
+  function fromFuncheap(p) {
+    const startAt = p.dateISO ? `${p.dateISO}T12:00:00` : null;
+    const free = !p.cost || /free/i.test(p.cost);
+    return {
+      id: `f-${p.id}`, name: p.name, startAt, url: p.url, image: p.image, place: p.place || null, avatars: [],
+      isSoldOut: false, isNearCapacity: false, spotsRemaining: null, emoji: "🎈",
+      desc: [startAt ? dayLabel(startAt) : null, p.time, p.excerpt].filter(Boolean).join(" · "),
+      pill: p.cost || "Free", pillCls: free ? "green" : "blue",
+    };
+  }
+  function fromPerk(p, i) {
+    return {
+      id: `p-${i}`, name: p.name, startAt: null, url: p.url, image: p.image, place: p.place || "SF", avatars: [],
+      desc: `${p.offer}${p.note ? ` ${p.note}` : ""}`, pill: "Free", pillCls: "green", emoji: "🌷",
+    };
+  }
 
-  const funCard = (p, i) => hCard({
-    id: p.id, title: p.name, desc: p.excerpt, photo: p.image, pinText: "Funcheap",
-    pill: p.cost || p.date || "Free or cheap", pillCls: p.cost && /free/i.test(p.cost) ? "green" : "blue",
-    url: p.url, emoji: "🎈",
-  }, i);
+  const state = { luma: [], instagram: [], funcheap: [], perks: [], lumaAt: 0, igLoaded: false };
 
-  const tmCard = (e, i) => hCard({
-    id: e.id, title: e.name,
-    desc: `${e.isTimed ? `${dayLabel(e.startAt)} · ${clock(e.startAt)}` : "Time to be announced"}${e.classification ? ` · ${e.classification}` : ""}`,
-    photo: e.imageUrl, pinText: e.venue || e.neighborhood || "SF",
-    pill: e.price || "Ticketed", pillCls: e.price === "Free" ? "green" : "blue", url: e.url, emoji: "🎟️",
-  }, i);
+  const stateHtml = ({ emoji, title, body, retry }) => `<div class="state"><span class="big">${emoji}</span><h3>${title}</h3><p>${body}</p>${retry ? `<button class="btn" type="button" data-retry="${retry}">Try again</button>` : ""}</div>`;
+  const skeletonHtml = (n = 2) => Array.from({ length: n }, () => `<div class="skel"><div class="b ph"></div><div class="col"><div class="b l1"></div><div class="b l2"></div><div class="b l3"></div></div></div>`).join("");
+  function setPill(id, text) { const el = $(id); if (el.textContent === String(text)) return; el.textContent = text; el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
 
-  const igCard = (e, i) => {
-    const iso = `${e.startDate}T${e.startTime || "12:00"}:00`;
-    return hCard({
-      id: e.id, title: e.name,
-      desc: `${dayLabel(iso)}${e.startTime ? ` · ${clock(iso)}` : ""}${e.oneLine ? ` · ${e.oneLine}` : ""}`,
-      photo: e.imageUrl, pinText: e.venue || `@${e.handle}`,
-      pill: e.cost || `@${e.handle}`, pillCls: e.cost && /free/i.test(e.cost) ? "green" : "blue",
-      url: e.sourceUrl, emoji: "📸",
-    }, i);
-  };
-  const igPostCard = (p, i) => hCard({
-    id: p.id, title: `@${p.handle}`,
-    desc: (p.caption || "").split("\n").filter(Boolean).slice(0, 2).join(" ").slice(0, 160),
-    photo: p.imageUrl, pinText: p.location || "Instagram",
-    pill: timeAgo(new Date(p.postedAt).getTime()), pillCls: "gray", url: p.url, emoji: "📸",
-  }, i);
-
-  const PERK_EMOJI = ["🌷", "🍵", "🌺", "🖼️", "🎋", "🌿"];
-  const perkCard = (p, i) => hCard({
-    id: `perk-${i}`, title: p.name, desc: `${p.offer}${p.note ? ` ${p.note}` : ""}`,
-    photo: null, pinText: "SF", pill: "Free", pillCls: "green", url: p.url, emoji: PERK_EMOJI[i % PERK_EMOJI.length],
-  }, i);
-
-  // ---------- rendering helpers ----------
-  const stateHtml = ({ emoji, title, body, retry }) => `
-    <div class="state"><span class="big">${emoji}</span><h3>${title}</h3><p>${body}</p>
-      ${retry ? `<button class="btn" type="button" data-retry="${retry}">Try again</button>` : ""}</div>`;
-  const skeletonHtml = (n = 2) => Array.from({ length: n }, () => `
-    <div class="skel"><div class="b ph"></div><div class="col"><div class="b l1"></div><div class="b l2"></div><div class="b l3"></div></div></div>`).join("");
-
-  function renderList(el, items, cardFn, { initial = 8, empty = "Nothing here right now" } = {}) {
+  function renderList(el, items, { initial = 8, empty = "Nothing here right now", dayHeaders = false } = {}) {
     el.innerHTML = "";
     if (!items.length) { el.innerHTML = stateHtml({ emoji: "🫧", title: empty, body: "Check back after the next sweep." }); return; }
-    const frag = document.createDocumentFragment();
-    items.slice(0, initial).forEach((it, i) => frag.appendChild(cardFn(it, i)));
-    el.appendChild(frag);
+    const paint = (slice, offset) => {
+      const frag = document.createDocumentFragment();
+      let lastDay = offset > 0 ? dayLabel(items[offset - 1].startAt) : null;
+      slice.forEach((it, i) => {
+        if (dayHeaders && it.startAt) {
+          const d = dayLabel(it.startAt);
+          if (d !== lastDay) { const h = document.createElement("div"); h.className = "day" + (d === "Today" ? " today" : ""); h.textContent = d; watchReveal(h); frag.appendChild(h); lastDay = d; }
+        }
+        frag.appendChild(card(it, i));
+      });
+      return frag;
+    };
+    el.appendChild(paint(items.slice(0, initial), 0));
     if (items.length > initial) {
       const b = document.createElement("button");
       b.className = "more-btn"; b.type = "button"; b.textContent = `Show ${items.length - initial} more`;
-      b.addEventListener("click", () => {
-        Sound.tap();
-        const f = document.createDocumentFragment();
-        items.slice(initial).forEach((it, i) => f.appendChild(cardFn(it, i)));
-        b.replaceWith(f);
-      });
+      b.addEventListener("click", () => { Sound.tap(); b.replaceWith(paint(items.slice(initial), initial)); });
       el.appendChild(b);
     }
   }
-  function setPill(id, text) { const el = $(id); if (el.textContent !== String(text)) el.textContent = text; }
 
-  // ---------- loaders (API contract unchanged) ----------
-  const state = { events: [], eventsAt: 0, funcheap: [], tm: null, ig: null, perks: [] };
+  function render() {
+    const all = [...state.luma.map(fromLuma), ...state.instagram.map(fromInstagram), ...state.funcheap.map(fromFuncheap)];
+    const now = Date.now();
+    const live = all.filter((it) => !it.isSoldOut);
+    const dated = live.filter((it) => it.startAt && new Date(it.startAt).getTime() >= now - 3 * 3600 * 1000).sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+    const anytime = live.filter((it) => !it.startAt);
+    const near = dated.filter((it) => it.isNearCapacity);
+    const sold = all.filter((it) => it.isSoldOut).sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+    let soon = dated.filter((it) => new Date(it.startAt).getTime() <= now + 48 * 3600 * 1000);
+    if (soon.length < 4) soon = dated.slice(0, 8);
 
-  function renderEvents(events) {
-    const byStart = (a, b) => new Date(a.startAt) - new Date(b.startAt);
-    const live = events.filter((e) => !e.isSoldOut).sort(byStart);
-    const near = live.filter((e) => e.isNearCapacity);
-    const open = live.filter((e) => !e.isNearCapacity);
-    const sold = events.filter((e) => e.isSoldOut).sort(byStart);
-    const now = Date.now(), cutoff = now + 48 * 3600 * 1000;
-    let soon = live.filter((e) => { const t = new Date(e.startAt).getTime(); return t >= now - 3600 * 1000 && t <= cutoff; });
-    if (soon.length < 4) soon = live.slice(0, 8);
-    const rail = $("railSoon");
-    rail.innerHTML = "";
-    if (!soon.length) rail.innerHTML = stateHtml({ emoji: "🫧", title: "Nothing in the next two days", body: "The full list is below." });
-    else soon.slice(0, 10).forEach((e, i) => rail.appendChild(railTile(e, i)));
+    const rail = $("railSoon"); rail.innerHTML = "";
+    if (!soon.length) rail.innerHTML = stateHtml({ emoji: "🫧", title: "Nothing in the next two days", body: "The full month is below." });
+    else soon.slice(0, 10).forEach((it, i) => rail.appendChild(railTile(it, i)));
 
     setPill("nearCount", near.length ? `${near.length} filling up` : "none right now");
-    setPill("openCount", `${open.length}`);
-    const badge = $("navOpenBadge"); badge.textContent = open.length; badge.hidden = !open.length;
-    renderList($("listNear"), near, lumaCard, { initial: 6, empty: "Nothing is close to full right now" });
-    renderList($("listOpen"), open, lumaCard, { initial: 8 });
-    renderList($("listSold"), sold, lumaCard, { initial: 6, empty: "Nothing sold out yet" });
-    $("sold").querySelector("h2").textContent = sold.length ? `Sold out already · ${sold.length}` : "Sold out already";
+    renderList($("listNear"), near, { initial: 6, empty: "Nothing is close to full right now" });
+    setPill("monthCount", `${dated.length}`);
+    const badge = $("navBadge"); badge.textContent = dated.length; badge.hidden = !dated.length;
+    renderList($("listMonth"), dated, { initial: 10, dayHeaders: true });
+    setPill("anytimeCount", `${anytime.length}`);
+    renderList($("listAnytime"), anytime, { initial: 6, empty: "Nothing ongoing right now" });
+    renderList($("listSold"), sold, { initial: 6, empty: "Nothing sold out yet" });
+    $("soldTitle").textContent = sold.length ? `Sold out already · ${sold.length}` : "Sold out already";
   }
 
-  async function loadEvents(force) {
-    if (!state.events.length) { $("listNear").innerHTML = skeletonHtml(1); $("listOpen").innerHTML = skeletonHtml(2); }
+  // ---------- loaders (API contract unchanged) ----------
+  async function loadLuma(force) {
+    if (!state.luma.length) { $("listNear").innerHTML = skeletonHtml(1); $("listMonth").innerHTML = skeletonHtml(2); }
     try {
       const res = await fetch(`/api/events${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      state.events = data.events ?? []; state.eventsAt = data.updatedAt;
-      renderEvents(state.events);
+      state.luma = data.events ?? []; state.lumaAt = data.updatedAt;
+      render();
       $("dot").classList.remove("off");
-      $("updated").textContent = `Luma checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : " · live"} · ${state.events.length} events in 30 days`;
-      return { fresh: !data.fromCache, count: state.events.length };
+      $("updated").textContent = `Checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : " · live"}`;
+      return { fresh: !data.fromCache, count: state.luma.length };
     } catch (err) {
-      if (!state.events.length) {
-        const html = stateHtml({ emoji: "🌫️", title: "Luma is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "events" });
-        $("listNear").innerHTML = html; $("listOpen").innerHTML = ""; $("railSoon").innerHTML = "";
-        $("dot").classList.add("off"); $("updated").textContent = "Luma unreachable";
-      }
+      if (!state.luma.length) { $("listNear").innerHTML = stateHtml({ emoji: "🌫️", title: "Events are out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "luma" }); $("listMonth").innerHTML = ""; $("railSoon").innerHTML = ""; $("dot").classList.add("off"); $("updated").textContent = "Source unreachable"; }
       throw err;
     }
   }
-
   async function loadFuncheap(force) {
-    const el = $("listFun");
-    if (!state.funcheap.length) el.innerHTML = skeletonHtml(2);
     try {
       const res = await fetch(`/api/funcheap${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       state.funcheap = data.posts ?? [];
-      setPill("funCount", `${state.funcheap.length}`);
-      renderList(el, state.funcheap, funCard, { initial: 6 });
+      render();
       return { fresh: !data.fromCache, count: state.funcheap.length };
-    } catch (err) {
-      if (!state.funcheap.length) el.innerHTML = stateHtml({ emoji: "🎈", title: "Funcheap is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "funcheap" });
-      throw err;
-    }
+    } catch (err) { throw err; }
   }
-
-  async function loadTicketmaster(force) {
-    const el = $("listTm");
-    if (!state.tm) el.innerHTML = skeletonHtml(1);
-    try {
-      const res = await fetch(`/api/ticketmaster${force ? "?refresh=1" : ""}`);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      state.tm = data;
-      if (!data.configured) {
-        setPill("tmCount", "off");
-        el.innerHTML = stateHtml({ emoji: "🎟️", title: "Not connected yet", body: "Concerts, sports and theater land here once a free Ticketmaster key is set as <code>TICKETMASTER_API_KEY</code>." });
-        return { fresh: false, count: 0, off: true };
-      }
-      const events = data.events ?? [];
-      setPill("tmCount", `${events.length}`);
-      renderList(el, events, tmCard, { initial: 6 });
-      return { fresh: !data.fromCache, count: events.length };
-    } catch (err) {
-      if (!state.tm) el.innerHTML = stateHtml({ emoji: "🎟️", title: "Ticketmaster is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "tm" });
-      throw err;
-    }
-  }
-
-  // Instagram is the one source that can kick off a paid scrape behind a cache
-  // miss, so it never loads on its own: only when someone taps the button,
-  // or lands directly on #instagram. Sweep includes it only after that.
-  let igRequested = false;
+  // Instagram can kick off a paid scrape behind a cache miss, so it only
+  // loads when someone asks: "Find more" or the sweep circle.
   async function loadInstagram(force) {
-    igRequested = true;
-    const el = $("listIg");
-    if (!state.ig) el.innerHTML = skeletonHtml(2);
+    const btn = $("findMore");
+    btn.classList.add("busy"); btn.innerHTML = `${REFRESH} Looking around…`;
     try {
       const res = await fetch(`/api/instagram${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      state.ig = data;
-      if (!data.configured) {
-        setPill("igCount", "off");
-        el.innerHTML = stateHtml({ emoji: "📸", title: "Not connected yet", body: "Set <code>APIFY_API_KEY</code> on the server to switch this lane on." });
-        return { fresh: false, count: 0, off: true };
-      }
-      const events = data.events ?? [], posts = data.posts ?? [];
-      const handles = (data.accounts ?? []).map((h) => `@${h}`).join(", ");
-      $("igSub").textContent = `Reading ${handles}`;
-      if (events.length) {
-        setPill("igCount", `${events.length}`);
-        renderList(el, events, igCard, { initial: 6 });
-      } else if (posts.length) {
-        setPill("igCount", `${posts.length} posts`);
-        renderList(el, posts, igPostCard, { initial: 6 });
-      } else {
-        setPill("igCount", "0");
-        el.innerHTML = stateHtml({ emoji: "📸", title: data.refreshing ? "First scrape is running" : "Nothing posted in the last 30 days", body: data.refreshing ? "Check back in a couple of minutes." : "These accounts have been quiet." });
-      }
-      if (data.refreshing) toast("A fresh Instagram scrape is running in the background.");
-      return { fresh: !data.fromCache, count: events.length || posts.length };
+      state.igLoaded = true;
+      state.instagram = data.configured ? (data.events ?? []) : [];
+      render();
+      btn.hidden = true;
+      if (!data.configured) toast("That extra source isn't switched on yet.");
+      else if (!state.instagram.length) toast(data.refreshing ? "Looking further, check back in a couple of minutes." : "Nothing extra found right now.");
+      else toast(`Found ${state.instagram.length} more around town ✨`);
+      return { fresh: !data.fromCache, count: state.instagram.length };
     } catch (err) {
-      if (!state.ig) el.innerHTML = stateHtml({ emoji: "📸", title: "Instagram is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "ig" });
+      btn.classList.remove("busy"); btn.textContent = "Find more around town";
+      toast("Couldn't look further right now, try again in a minute.");
       throw err;
     }
   }
-  $("igLoad").addEventListener("click", () => { Sound.tap(); loadInstagram(false).catch(() => {}); });
+  $("findMore").addEventListener("click", () => { Sound.tap(); loadInstagram(false).catch(() => {}); });
 
   async function loadPerks() {
-    const el = $("listPerks");
-    el.innerHTML = skeletonHtml(1);
+    const el = $("listPerks"); el.innerHTML = skeletonHtml(1);
     try {
       const res = await fetch("/api/perks");
       const data = await res.json();
       state.perks = data.perks ?? [];
       setPill("perksCount", `${state.perks.length} free`);
       $("perksSub").textContent = `Hand-checked as of ${data.verifiedOn}`;
-      renderList(el, state.perks, perkCard, { initial: 6 });
-      $("footer").innerHTML = `Events come straight from <a href="https://luma.com/discover/sf" target="_blank" rel="noreferrer">Luma</a>, <a href="https://sf.funcheap.com" target="_blank" rel="noreferrer">Funcheap</a> and a handful of SF Instagram accounts, cached briefly to be polite to them. Perks hand-checked as of ${escapeHtml(data.verifiedOn)}.`;
-    } catch {
-      el.innerHTML = stateHtml({ emoji: "🌷", title: "Perks list didn't load", body: "Refresh the page to try again.", retry: "perks" });
-    }
+      renderList(el, state.perks.map(fromPerk), { initial: 6 });
+      $("footer").innerHTML = `Events come from <a href="https://luma.com/discover/sf" target="_blank" rel="noreferrer">Luma</a>, <a href="https://sf.funcheap.com" target="_blank" rel="noreferrer">Funcheap</a> and a few SF Instagram accounts, cached briefly to be polite to them. Perks hand-checked as of ${escapeHtml(data.verifiedOn)}. Photos belong to their organizers.`;
+    } catch { el.innerHTML = stateHtml({ emoji: "🌷", title: "Perks list didn't load", body: "Refresh the page to try again.", retry: "perks" }); }
   }
 
   document.addEventListener("click", (ev) => {
     const btn = ev.target.closest("[data-retry]");
     if (!btn) return;
     Sound.tap();
-    ({ events: () => loadEvents(false), funcheap: () => loadFuncheap(false), tm: () => loadTicketmaster(false), ig: () => loadInstagram(false), perks: loadPerks })[btn.dataset.retry]?.().catch(() => {});
+    ({ luma: () => loadLuma(false), perks: loadPerks })[btn.dataset.retry]?.().catch(() => {});
   });
 
-  // ---------- nav: real section jumps ----------
+  // ---------- nav ----------
   function jump(id) {
     Sound.tap();
     if (id === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); history.replaceState(null, "", location.pathname); return; }
-    const el = $(id);
-    if (!el) return;
-    if (id === "instagram" && !igRequested) loadInstagram(false).catch(() => {});
+    const el = $(id); if (!el) return;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
     history.replaceState(null, "", `#${id}`);
   }
   document.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click", () => jump(b.dataset.nav)));
   document.querySelectorAll("[data-jump]").forEach((b) => b.addEventListener("click", () => jump(b.dataset.jump)));
   $("sold").querySelector("summary").addEventListener("click", () => Sound.tap());
-
-  // active nav item follows scroll position
-  const navFor = { soon: "top", near: "open", open: "open", funcheap: "open", instagram: "open", tm: "open", perks: "perks", sold: "perks" };
-  const setActiveNav = (key) => document.querySelectorAll("[data-nav]").forEach((b) => b.classList.toggle("on", b.dataset.nav === key));
-  document.querySelectorAll("section").forEach((s) => {
-    new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) setActiveNav(window.scrollY < 120 ? "top" : navFor[s.id] || "top"); });
-    }, { rootMargin: "-40% 0px -50% 0px" }).observe(s);
-  });
+  const navFor = { soon: "top", near: "top", month: "month", anytime: "month", perks: "perks", sold: "perks" };
+  const setActiveNav = (key) => document.querySelectorAll("[data-nav]").forEach((b) => { const on = b.dataset.nav === key; if (on !== b.classList.contains("on")) b.classList.toggle("on", on); });
+  document.querySelectorAll("section").forEach((s) => new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) setActiveNav(window.scrollY < 120 ? "top" : navFor[s.id] || "top"); }), { rootMargin: "-40% 0px -50% 0px" }).observe(s));
   window.addEventListener("scroll", () => { if (window.scrollY < 120) setActiveNav("top"); }, { passive: true });
 
   // ---------- the one real action ----------
@@ -737,8 +580,7 @@
     const b = $("sweep"); b.classList.add("busy"); b.classList.remove("done");
     Sound.whoosh();
     const started = Date.now();
-    const jobs = [loadEvents(true), loadFuncheap(true), loadTicketmaster(true)];
-    if (igRequested) jobs.push(loadInstagram(true));
+    const jobs = [loadLuma(true), loadFuncheap(true), loadInstagram(true)];
     const results = await Promise.allSettled(jobs);
     await new Promise((r) => setTimeout(r, Math.max(0, 700 - (Date.now() - started))));
     const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
@@ -747,19 +589,18 @@
     sweeping = false;
     if (!ok.length) { Sound.error(); toast("Every source was unreachable. Try again in a minute."); return; }
     Sound.success();
-    if (fresh.length) toast(`Fresh sweep done · ${fresh.reduce((a, r) => a + r.count, 0)} live listings`);
+    const total = ok.reduce((a, r) => a + r.count, 0);
+    if (fresh.length) toast(`Fresh sweep done · ${total} listings`);
     else toast("Checked very recently, showing cached results to go easy on the sources.");
   }
   $("sweep").addEventListener("click", runSweep);
 
   // ---------- boot ----------
-  loadEvents(false).catch(() => {});
+  loadLuma(false).catch(() => {});
   loadFuncheap().catch(() => {});
-  loadTicketmaster().catch(() => {});
   loadPerks();
-  if (location.hash === "#instagram") loadInstagram(false).catch(() => {});
-  else if (location.hash) { const t = $(location.hash.slice(1)); if (t) setTimeout(() => t.scrollIntoView({ block: "start" }), 300); }
-  setInterval(() => { if (state.eventsAt) $("updated").textContent = $("updated").textContent.replace(/^Luma checked .*?(?= ·)/, `Luma checked ${timeAgo(state.eventsAt)}`); }, 60000);
+  if (location.hash) { const t = $(location.hash.slice(1)); if (t) setTimeout(() => t.scrollIntoView({ block: "start" }), 300); }
+  setInterval(() => { if (state.lumaAt) $("updated").textContent = $("updated").textContent.replace(/^Checked .*?(?= ·|$)/, `Checked ${timeAgo(state.lumaAt)}`); }, 60000);
 </script>
 </body>
 </html>

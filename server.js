@@ -3,7 +3,6 @@ const express = require("express");
 const path = require("path");
 const { getEvents } = require("./lib/luma");
 const { getFuncheap } = require("./lib/funcheap");
-const { getTicketmasterEvents } = require("./lib/ticketmaster");
 const { getInstagram, ACCOUNTS } = require("./lib/instagram");
 const perks = require("./lib/perks");
 
@@ -33,16 +32,6 @@ app.get("/api/funcheap", async (req, res) => {
     res.json({ posts, updatedAt, fromCache });
   } catch (err) {
     res.status(502).json({ error: "Could not reach Funcheap right now, try again shortly." });
-  }
-});
-
-app.get("/api/ticketmaster", async (req, res) => {
-  try {
-    const force = req.query.refresh === "1";
-    const { events, updatedAt, fromCache, configured } = await getTicketmasterEvents({ force });
-    res.json({ events, updatedAt, fromCache, configured });
-  } catch (err) {
-    res.status(502).json({ error: "Could not reach Ticketmaster right now, try again shortly." });
   }
 });
 
