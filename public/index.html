@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#E6DEFF" />
 <title>SF perks + AI events sweep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,14 +12,20 @@
   :root {
     --pink: #FF2D78;
     --purple: #7B5CFF;
-    --lavender: #EFE9FF;
-    --yellow: #FFC93C;
     --mint: #2BD4A8;
+    --yellow: #FFC93C;
+    --lavender: #E6DEFF;
+    --periwinkle: #DCE6FF;
     --ink: #17131F;
-    --muted: #837C93;
-    --bg: #F6F3FF;
-    --card: #ffffff;
-    --border: #EDE7F6;
+    --muted: #7D7690;
+    --bg: #FFFFFF;
+    --soft: #F6F3FF;
+    --border: #EEE9F8;
+    --shadow: 0 16px 36px rgba(80, 60, 140, 0.14);
+    --radius-card: 26px;
+    --radius-photo: 18px;
+    --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+    --ease-out: cubic-bezier(.2, .8, .2, 1);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
@@ -26,31 +33,44 @@
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: "Poppins", system-ui, sans-serif;
-    padding-bottom: 100px;
+    font-family: "Poppins", system-ui, -apple-system, sans-serif;
+    padding-bottom: 120px;
+    -webkit-font-smoothing: antialiased;
   }
+  button { font-family: inherit; }
+  a { color: inherit; }
+  .wrap { max-width: 640px; margin: 0 auto; }
 
+  /* ===== hero ===== */
   .hero {
-    background: linear-gradient(160deg, #EAE3FF 0%, #F6F3FF 60%);
-    padding: 26px 20px 18px;
-    border-radius: 0 0 32px 32px;
+    background: linear-gradient(165deg, var(--lavender) 0%, var(--periwinkle) 48%, #F8F5FF 100%);
+    padding: 30px 20px 22px;
+    border-radius: 0 0 38px 38px;
     position: relative;
     overflow: hidden;
   }
-  .hero::after {
-    content: "";
-    position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,45,120,0.18), transparent 70%);
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%; pointer-events: none;
+    filter: blur(2px);
   }
-  .hero-inner { max-width: 640px; margin: 0 auto; position: relative; }
-  .greet-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .greet { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
-  .greet span.wave { display: inline-block; animation: wave 2.2s ease-in-out infinite; transform-origin: 70% 70%; }
+  .hero::before {
+    top: -70px; right: -50px; width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,45,120,0.22), transparent 68%);
+    animation: drift 9s ease-in-out infinite;
+  }
+  .hero::after {
+    bottom: -90px; left: -40px; width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(43,212,168,0.22), transparent 68%);
+    animation: drift 11s ease-in-out infinite reverse;
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-14px, 12px); }
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  .greet-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .greet { font-size: 24px; font-weight: 800; letter-spacing: -0.025em; margin: 0; line-height: 1.2; }
+  .greet .wave { display: inline-block; animation: wave 2.4s ease-in-out infinite; transform-origin: 70% 70%; }
   @keyframes wave {
     0%, 60%, 100% { transform: rotate(0deg); }
     10% { transform: rotate(14deg); }
@@ -58,329 +78,1104 @@
     30% { transform: rotate(14deg); }
     40% { transform: rotate(-4deg); }
   }
-  .avatar-blob {
-    width: 42px; height: 42px; border-radius: 14px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--pink), var(--purple));
-    display: grid; place-items: center; font-size: 18px;
-    box-shadow: 0 6px 16px rgba(123,92,255,0.35);
+  .greet-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .icon-btn {
+    width: 42px; height: 42px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    display: grid; place-items: center; cursor: pointer; color: var(--ink);
+    box-shadow: 0 4px 14px rgba(80,60,140,0.12);
+    transition: transform 0.2s var(--ease-pop), background 0.2s ease;
   }
-  .sub { color: var(--muted); font-size: 13.5px; line-height: 1.5; margin: 8px 0 16px; max-width: 520px; }
+  .icon-btn:hover { background: #fff; }
+  .icon-btn:active { transform: scale(0.88); }
+  .icon-btn[aria-pressed="false"] { color: var(--muted); }
+  .icon-btn[aria-pressed="true"] .ico-off { display: none; }
+  .icon-btn[aria-pressed="false"] .ico-on { display: none; }
+  .avatar-blob {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    display: grid; place-items: center; font-size: 19px;
+    box-shadow: 0 6px 16px rgba(123,92,255,0.35);
+    border: 2px solid rgba(255,255,255,0.8);
+  }
+  .sub { color: #5E5775; font-size: 13.5px; line-height: 1.55; margin: 10px 0 0; max-width: 520px; }
 
+  .host-strip {
+    display: flex; align-items: center; gap: 10px; margin-top: 16px; min-height: 30px;
+    opacity: 0; transform: translateY(6px); transition: opacity 0.4s ease, transform 0.4s var(--ease-out);
+  }
+  .host-strip.show { opacity: 1; transform: none; }
+  .host-strip .label { font-size: 12.5px; font-weight: 600; color: #5E5775; }
+  .host-strip .label b { color: var(--ink); font-weight: 800; }
+
+  .stack { display: flex; align-items: center; }
+  .stack img, .stack .more {
+    width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+    border: 2px solid #fff; margin-left: -9px; background: var(--soft);
+    box-shadow: 0 2px 6px rgba(23,19,31,0.08);
+  }
+  .stack img:first-child, .stack .more:first-child { margin-left: 0; }
+  .stack .more {
+    display: grid; place-items: center; font-size: 9.5px; font-weight: 800;
+    background: var(--ink); color: #fff;
+  }
+  .stack.sm img, .stack.sm .more { width: 24px; height: 24px; margin-left: -8px; }
+  .stack.sm img:first-child, .stack.sm .more:first-child { margin-left: 0; }
+
+  /* ===== sticky chips ===== */
+  .chipbar {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(255,255,255,0.84);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    padding: 10px 20px 8px;
+    transition: box-shadow 0.25s ease;
+  }
+  .chipbar.stuck { box-shadow: 0 8px 24px rgba(80,60,140,0.08); }
   .chiprow {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px;
-    scrollbar-width: none;
+    display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 4px;
+    scrollbar-width: none; scroll-snap-type: x proximity;
   }
   .chiprow::-webkit-scrollbar { display: none; }
   .chip {
-    flex-shrink: 0;
-    font-family: inherit; font-weight: 700; font-size: 13px;
-    border: none; border-radius: 999px; padding: 10px 16px;
-    background: #ffffffb0; color: var(--ink);
-    cursor: pointer; transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
-    display: flex; align-items: center; gap: 6px;
+    flex-shrink: 0; scroll-snap-align: start;
+    font-weight: 700; font-size: 13px;
+    border: 1.5px solid transparent; border-radius: 999px; padding: 9px 14px 9px 12px;
+    background: var(--soft); color: var(--ink);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-pop), background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    display: flex; align-items: center; gap: 6px; line-height: 1;
   }
+  .chip:hover { background: #EFE9FF; }
   .chip .n {
-    font-size: 10.5px; font-weight: 800; background: rgba(0,0,0,0.08);
-    border-radius: 999px; padding: 1px 6px;
+    font-size: 10.5px; font-weight: 800; background: rgba(23,19,31,0.08);
+    border-radius: 999px; padding: 3px 7px; min-width: 22px; text-align: center;
+    transition: background 0.2s ease;
   }
-  .chip.active { background: var(--ink); color: white; transform: translateY(-1px); }
-  .chip.active .n { background: rgba(255,255,255,0.2); }
-  .chip:active { transform: scale(0.96); }
+  .chip.active { background: var(--ink); color: #fff; transform: translateY(-1px); }
+  .chip.active .n { background: rgba(255,255,255,0.22); }
+  .chip:active { transform: scale(0.94); }
+  .chip.bump .n { animation: bump 0.45s var(--ease-pop); }
+  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
 
-  main { max-width: 640px; margin: 0 auto; padding: 16px 20px 0; }
-
+  /* ===== main ===== */
+  main { padding: 6px 20px 0; }
   .meta-row {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 12px; color: var(--muted); font-weight: 600; margin: 14px 2px 10px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 11.5px; color: var(--muted); font-weight: 600; margin: 10px 2px 14px;
   }
+  .meta-row > span:last-child { white-space: nowrap; flex-shrink: 0; }
   .meta-row .dot {
-    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--mint); margin-right: 6px; animation: pulse 1.8s ease-in-out infinite;
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--mint); margin-right: 7px; animation: pulse 1.8s ease-in-out infinite;
+    box-shadow: 0 0 0 3px rgba(43,212,168,0.18);
   }
+  .meta-row .dot.off { background: var(--yellow); box-shadow: 0 0 0 3px rgba(255,201,60,0.2); }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
 
+  .panel[hidden] { display: none; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    margin: 6px 2px 10px;
+  }
+  .section-head h2 { font-size: 15px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+  .section-head .hint { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+  /* ===== rail (soonest) ===== */
+  .rail {
+    display: flex; gap: 12px; overflow-x: auto; padding: 4px 20px 16px; margin: 0 -20px 6px;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail-card {
+    flex: 0 0 152px; height: 204px; border-radius: 22px; position: relative; overflow: hidden;
+    scroll-snap-align: start; text-decoration: none; color: #fff; display: block;
+    background: var(--soft);
+    box-shadow: 0 8px 20px rgba(80,60,140,0.14);
+    transition: transform 0.25s var(--ease-pop), box-shadow 0.25s ease;
+    opacity: 0; transform: translateX(16px);
+    animation: slide 0.55s var(--ease-out) forwards;
+  }
+  .rail-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .rail-card:active { transform: scale(0.96); }
+  .rail-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .rail-card .shade {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(10,6,20,0.78) 100%);
+  }
+  .rail-card .time {
+    position: absolute; top: 10px; left: 10px;
+    font-size: 10.5px; font-weight: 800; padding: 5px 9px; border-radius: 999px;
+    background: rgba(255,255,255,0.9); color: var(--ink);
+  }
+  .rail-card .time.now { background: var(--yellow); }
+  .rail-card .body { position: absolute; left: 12px; right: 12px; bottom: 12px; }
+  .rail-card .title {
+    font-size: 12.5px; font-weight: 700; line-height: 1.25;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  .rail-card .pin { font-size: 10.5px; font-weight: 600; opacity: 0.92; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+  .rail-card .stack { margin-bottom: 6px; }
+  .rail-card .stack img { position: static; width: 24px; height: 24px; margin-left: -8px; border-color: rgba(255,255,255,0.95); }
+  .rail-card .stack img:first-child { margin-left: 0; }
+  .rail-card .fb-emoji { position: absolute; inset: 0; display: grid; place-items: center; font-size: 48px; }
+  @keyframes slide { to { opacity: 1; transform: none; } }
+
+  /* ===== big cards ===== */
   .card {
-    background: var(--card);
+    background: #fff;
     border: 1px solid var(--border);
-    border-radius: 22px;
-    padding: 12px;
-    margin-bottom: 12px;
-    display: flex; gap: 12px;
-    text-decoration: none; color: inherit;
-    opacity: 0; transform: translateY(14px) scale(0.98);
-    animation: rise 0.5s cubic-bezier(.2,.8,.2,1) forwards;
-    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    border-radius: var(--radius-card);
+    padding: 12px 12px 14px;
+    margin-bottom: 14px;
+    opacity: 0; transform: translateY(18px) scale(0.985);
+    animation: rise 0.55s var(--ease-out) forwards;
+    transition: box-shadow 0.25s ease, transform 0.25s var(--ease-out), border-color 0.25s ease;
   }
-  .card:hover { box-shadow: 0 10px 26px rgba(80,60,140,0.12); }
-  .card:active { transform: scale(0.985); }
-  @keyframes rise { to { opacity: 1; transform: translateY(0) scale(1); } }
+  .card:hover { box-shadow: var(--shadow); border-color: transparent; }
+  .card.pressed { transform: scale(0.985); }
+  @keyframes rise { to { opacity: 1; transform: none; } }
 
-  .thumb {
-    width: 72px; height: 72px; border-radius: 16px; flex-shrink: 0;
+  .card-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 2px 4px 10px; font-size: 12px; font-weight: 600; color: var(--muted);
+  }
+  .card-top .when { display: flex; align-items: center; gap: 6px; color: var(--ink); }
+  .card-top .when .day {
+    background: var(--soft); padding: 4px 9px; border-radius: 999px; font-weight: 800; font-size: 11.5px;
+  }
+  .card-top .when .day.today { background: var(--yellow); }
+  .card-top .when .day.tomorrow { background: color-mix(in srgb, var(--mint) 28%, #fff); }
+  .card-top .src { display: flex; align-items: center; gap: 5px; font-size: 11.5px; }
+  .card-top .src i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  .photo {
+    position: relative; aspect-ratio: 16 / 10; border-radius: var(--radius-photo); overflow: hidden;
     background: linear-gradient(135deg, var(--lavender), #fff);
-    background-size: cover; background-position: center;
-    display: grid; place-items: center; font-size: 26px;
+    display: block; text-decoration: none; cursor: pointer;
   }
-  .card-body { min-width: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
-  .name { font-weight: 700; font-size: 14.5px; line-height: 1.25; }
-  .when { font-size: 12.5px; color: var(--muted); font-weight: 500; }
-  .badge {
-    align-self: flex-start;
-    font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px;
-    white-space: nowrap; margin-top: 2px;
+  .photo.short { aspect-ratio: 16 / 7; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s var(--ease-out); }
+  .card:hover .photo img { transform: scale(1.04); }
+  .photo .fb-emoji { position: absolute; inset: 0; display: grid; place-items: center; font-size: 56px; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12)); }
+  .photo .fb-emoji::after {
+    content: ""; position: absolute; width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,0.35); z-index: -1;
   }
-  .badge.near { background: linear-gradient(135deg, var(--pink), #FF6FA5); color: white; }
-  .badge.open { background: color-mix(in srgb, var(--mint) 16%, white); color: #0e7a5f; }
-  .badge.sold { background: #f1eef7; color: var(--muted); }
-
-  .card-foot { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
-  .avatars { display: flex; }
-  .avatars img {
-    width: 22px; height: 22px; border-radius: 50%; object-fit: cover;
-    border: 2px solid var(--card); margin-left: -8px; background: var(--lavender);
+  .photo .tag {
+    position: absolute; font-size: 10.5px; font-weight: 800; padding: 5px 10px; border-radius: 999px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: inline-flex; align-items: center; gap: 4px; line-height: 1.2;
   }
-  .avatars img:first-child { margin-left: 0; }
+  .photo .tag.tl { top: 10px; left: 10px; }
+  .photo .tag.tr { top: 10px; right: 10px; }
+  .tag.near { background: linear-gradient(135deg, var(--pink), #FF6FA5); color: #fff; box-shadow: 0 4px 12px rgba(255,45,120,0.35); }
+  .tag.open { background: rgba(255,255,255,0.92); color: #0E7A5F; }
+  .tag.sold { background: rgba(23,19,31,0.78); color: #fff; }
+  .tag.free { background: var(--mint); color: #073D30; }
+  .tag.price { background: rgba(255,255,255,0.92); color: var(--ink); }
+  .tag.cat { background: rgba(255,255,255,0.92); color: var(--purple); }
 
-  .empty { font-size: 13.5px; color: var(--muted); padding: 30px 4px; text-align: center; }
+  .card-body { padding: 12px 4px 0; }
+  .title {
+    font-weight: 800; font-size: 16px; line-height: 1.3; letter-spacing: -0.01em; margin: 0;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .title a { text-decoration: none; }
+  .title a:hover { color: var(--purple); }
+  .loc { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--muted); font-weight: 500; margin-top: 6px; }
+  .loc svg { flex-shrink: 0; color: var(--pink); }
+  .excerpt { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-top: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pillrow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pill {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+    background: var(--soft); color: var(--ink);
+  }
+  .pill.mint { background: color-mix(in srgb, var(--mint) 22%, #fff); color: #0E7A5F; }
+  .pill.yellow { background: color-mix(in srgb, var(--yellow) 40%, #fff); color: #6A4B00; }
 
-  .perk-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 16px; margin-bottom: 12px; display: block; text-decoration: none; color: inherit; opacity: 0; transform: translateY(14px); animation: rise 0.5s cubic-bezier(.2,.8,.2,1) forwards; }
-  .perk-name { font-weight: 700; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
-  .perk-offer { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; margin-top: 12px; flex-wrap: wrap; }
+  .card-foot .actions { margin-left: auto; }
+  .going { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 600; min-width: 0; }
+  .going b { color: var(--ink); font-weight: 800; }
+  .going .spots { color: var(--pink); font-weight: 800; }
+  .actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn {
+    border-radius: 999px; padding: 9px 14px; font-size: 12.5px; font-weight: 700;
+    border: 1.5px solid var(--border); background: #fff; color: var(--ink);
+    cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    transition: transform 0.2s var(--ease-pop), background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap; line-height: 1;
+  }
+  .btn:hover { border-color: #D9D0F5; background: var(--soft); }
+  .btn:active { transform: scale(0.93); }
+  .btn.primary { background: var(--purple); color: #fff; border-color: var(--purple); box-shadow: 0 6px 16px rgba(123,92,255,0.32); }
+  .btn.primary:hover { background: #6A4AF5; }
+  .btn.primary.hot { background: linear-gradient(135deg, var(--pink), var(--purple)); border-color: transparent; box-shadow: 0 6px 16px rgba(255,45,120,0.3); }
+  .btn.primary.dark { background: var(--ink); border-color: var(--ink); box-shadow: 0 6px 16px rgba(23,19,31,0.22); }
+  .btn.icon { width: 36px; height: 36px; padding: 0; justify-content: center; }
 
+  .more-btn {
+    display: block; width: 100%; margin: 4px 0 18px; padding: 12px; border-radius: 18px;
+    border: 1.5px dashed #D9D0F5; background: transparent; color: var(--purple);
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s var(--ease-pop);
+  }
+  .more-btn:hover { background: var(--soft); }
+  .more-btn:active { transform: scale(0.98); }
+
+  /* ===== perks ===== */
+  .perk {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card);
+    padding: 14px; margin-bottom: 12px;
+    opacity: 0; transform: translateY(18px); animation: rise 0.55s var(--ease-out) forwards;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .perk:hover { box-shadow: var(--shadow); border-color: transparent; }
+  .perk .tile {
+    width: 62px; height: 62px; border-radius: 20px; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 28px;
+  }
+  .perk .pb { flex: 1; min-width: 0; }
+  .perk .pname { font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .perk .offer { font-size: 12.5px; color: var(--ink); margin-top: 4px; line-height: 1.5; font-weight: 500; }
+  .perk .note { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .perk .actions { margin-top: 10px; }
+
+  /* ===== states ===== */
+  .state {
+    border-radius: var(--radius-card); padding: 26px 20px; text-align: center;
+    background: var(--soft); border: 1px solid var(--border); margin-bottom: 14px;
+    animation: rise 0.5s var(--ease-out) forwards; opacity: 0; transform: translateY(12px);
+  }
+  .state .big { font-size: 40px; line-height: 1; margin-bottom: 10px; display: inline-block; }
+  .state h3 { margin: 0 0 6px; font-size: 15px; font-weight: 800; }
+  .state p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+  .state code { background: #fff; padding: 2px 7px; border-radius: 8px; font-size: 11.5px; color: var(--purple); font-family: ui-monospace, Menlo, monospace; }
+  .state .btn { margin-top: 14px; }
+
+  .skel {
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-card);
+    padding: 12px; margin-bottom: 14px;
+  }
+  .skel .bar, .skel .box {
+    background: linear-gradient(90deg, #F1EDFA 25%, #FAF8FF 50%, #F1EDFA 75%);
+    background-size: 200% 100%; animation: shimmer 1.3s linear infinite; border-radius: 10px;
+  }
+  .skel .box { aspect-ratio: 16 / 10; border-radius: var(--radius-photo); }
+  .skel .bar { height: 14px; margin-top: 12px; }
+  .skel .bar.w60 { width: 60%; }
+  .skel .bar.w35 { width: 35%; height: 11px; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  footer { margin: 26px auto 0; padding: 0 20px; font-size: 11.5px; color: var(--muted); text-align: center; line-height: 1.6; }
+  footer a { color: var(--purple); text-decoration: none; font-weight: 600; }
+
+  /* ===== FAB + toast ===== */
   .fab {
-    position: fixed; right: 22px; bottom: 26px;
-    width: 58px; height: 58px; border-radius: 50%; border: none;
+    position: fixed; right: 20px; bottom: max(24px, env(safe-area-inset-bottom));
+    height: 56px; padding: 0 20px 0 16px; border-radius: 999px; border: none;
     background: linear-gradient(135deg, var(--pink), var(--purple));
-    color: white; font-size: 22px; cursor: pointer;
-    box-shadow: 0 12px 26px rgba(123,92,255,0.4);
-    display: grid; place-items: center;
-    transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
+    color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; z-index: 40;
+    box-shadow: 0 14px 30px rgba(123,92,255,0.42);
+    display: flex; align-items: center; gap: 10px;
+    transition: transform 0.25s var(--ease-pop), box-shadow 0.25s ease, opacity 0.2s ease;
   }
-  .fab:active { transform: scale(0.88); }
-  .fab.spin svg { animation: spin 0.9s linear infinite; }
+  .fab:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(123,92,255,0.5); }
+  .fab:active { transform: scale(0.9); }
+  .fab .ring { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.18); display: grid; place-items: center; }
+  .fab.busy { pointer-events: none; }
+  .fab.busy svg { animation: spin 0.9s linear infinite; }
+  .fab.done .ring { animation: ping 0.6s var(--ease-pop); }
   @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.6); } 100% { box-shadow: 0 0 0 18px rgba(255,255,255,0); } }
 
   .toast {
-    position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 12px);
-    background: var(--ink); color: white; font-size: 12.5px; font-weight: 600;
-    padding: 10px 16px; border-radius: 999px; opacity: 0; pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease; max-width: 80vw; text-align: center;
+    position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 14px) scale(0.96);
+    background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 600;
+    padding: 11px 18px; border-radius: 999px; opacity: 0; pointer-events: none; z-index: 41;
+    transition: opacity 0.25s ease, transform 0.3s var(--ease-pop);
+    max-width: min(86vw, 420px); text-align: center; line-height: 1.4;
+    box-shadow: 0 12px 30px rgba(23,19,31,0.3);
   }
-  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
 
-  footer { max-width: 640px; margin: 24px auto 0; padding: 0 20px; font-size: 11.5px; color: var(--muted); text-align: center; }
+  @media (max-width: 380px) {
+    .greet { font-size: 21px; }
+    .fab { padding: 0 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .card, .perk, .rail-card, .state, .host-strip { opacity: 1 !important; transform: none !important; }
+  }
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <div class="hero-inner">
+  <div class="wrap hero-inner">
     <div class="greet-row">
-      <div>
-        <h1 class="greet"><span class="wave">👋</span> Hey, what's on in SF</h1>
+      <h1 class="greet"><span class="wave">👋</span> Hey, what's on in SF</h1>
+      <div class="greet-actions">
+        <button class="icon-btn" id="soundToggle" aria-pressed="true" aria-label="Toggle sound effects" title="Sound effects">
+          <svg class="ico-on" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          <svg class="ico-off" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>
+        </button>
+        <div class="avatar-blob" aria-hidden="true">🌉</div>
       </div>
-      <div class="avatar-blob">🌉</div>
     </div>
-    <p class="sub">A demo agent that reads Luma's live SF AI events (real spots-remaining, not guesses) and pairs it with hand-checked free perks around the city. No account, no keys.</p>
-    <div class="chiprow" id="chips">
-      <button class="chip active" data-tab="near">🔥 Near capacity <span class="n" id="count-near">–</span></button>
-      <button class="chip" data-tab="open">✨ Open now <span class="n" id="count-open">–</span></button>
-      <button class="chip" data-tab="sold">💤 Sold out <span class="n" id="count-sold">–</span></button>
-      <button class="chip" data-tab="funcheap">🎈 Free & fun <span class="n" id="count-funcheap">–</span></button>
-      <button class="chip" data-tab="perks">🌷 Perks</button>
+    <p class="sub">A live sweep of Luma's SF AI and tech events (real spots remaining, not guesses), Funcheap's free picks, events spotted on SF Instagram accounts, and hand-checked free perks around the city. No account needed.</p>
+    <div class="host-strip" id="hostStrip" aria-live="polite"></div>
+  </div>
+</div>
+
+<div class="chipbar" id="chipbar">
+  <div class="wrap">
+    <div class="chiprow" id="chips" role="tablist" aria-label="Sections">
+      <button class="chip active" role="tab" aria-selected="true" data-tab="near">🔥 Near capacity <span class="n" id="count-near">–</span></button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="open">✨ Open now <span class="n" id="count-open">–</span></button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="sold">💤 Sold out <span class="n" id="count-sold">–</span></button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="funcheap">🎈 Free &amp; fun <span class="n" id="count-funcheap">–</span></button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="tm">🎟️ Concerts &amp; shows <span class="n" id="count-tm">–</span></button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="ig">📸 From Instagram <span class="n" id="count-ig">–</span></button>
+      <button class="chip" role="tab" aria-selected="false" data-tab="perks">🌷 Perks <span class="n" id="count-perks">–</span></button>
     </div>
   </div>
 </div>
 
-<main>
-  <div class="meta-row"><span><span class="dot"></span><span id="updated">Loading…</span></span></div>
-  <div id="near"></div>
-  <div id="open" hidden></div>
-  <div id="sold" hidden></div>
-  <div id="funcheap" hidden></div>
-  <div id="perks" hidden></div>
+<main class="wrap">
+  <div class="meta-row">
+    <span><span class="dot" id="dot"></span><span id="updated">Sweeping Luma…</span></span>
+    <span id="totals"></span>
+  </div>
+  <section class="panel" id="near" role="tabpanel"></section>
+  <section class="panel" id="open" role="tabpanel" hidden></section>
+  <section class="panel" id="sold" role="tabpanel" hidden></section>
+  <section class="panel" id="funcheap" role="tabpanel" hidden></section>
+  <section class="panel" id="tm" role="tabpanel" hidden></section>
+  <section class="panel" id="ig" role="tabpanel" hidden></section>
+  <section class="panel" id="perks" role="tabpanel" hidden></section>
 </main>
 
 <footer id="footer"></footer>
 
 <button class="fab" id="refresh" aria-label="Run the sweep now">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+  <span class="ring"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></span>
+  <span id="fabLabel">Run sweep</span>
 </button>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+  // ============================================================
+  // helpers
+  // ============================================================
   const $ = (id) => document.getElementById(id);
-  const fmtTime = (iso) => new Date(iso).toLocaleString("en-US", {
-    weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-  });
+  const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const hashStr = (s) => [...String(s ?? "")].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+  const GRADS = [
+    "linear-gradient(135deg, #FF2D78, #FF9A5C)",
+    "linear-gradient(135deg, #7B5CFF, #FF2D78)",
+    "linear-gradient(135deg, #2BD4A8, #7B5CFF)",
+    "linear-gradient(135deg, #FFC93C, #FF2D78)",
+    "linear-gradient(135deg, #5CC8FF, #7B5CFF)",
+    "linear-gradient(135deg, #2BD4A8, #FFC93C)",
+  ];
+  const gradFor = (seed) => GRADS[hashStr(seed) % GRADS.length];
+  const CAT_EMOJI = ["🎤", "🤝", "🎨", "🍽️", "🛠️", "🎉", "☕", "🧑‍💻", "🚀", "🧠"];
+  const emojiFor = (seed) => CAT_EMOJI[hashStr(seed) % CAT_EMOJI.length];
+  const FUN_EMOJI = ["🎈", "🎬", "🎶", "🖼️", "🌮", "🎪", "🌳", "🎭"];
+
+  const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  function dayInfo(iso) {
+    if (!iso) return { label: "Date TBA", cls: "" };
+    const d = new Date(iso);
+    if (isNaN(d)) return { label: "Date TBA", cls: "" };
+    const now = new Date();
+    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+    if (sameDay(d, now)) return { label: "Today", cls: "today" };
+    if (sameDay(d, tomorrow)) return { label: "Tomorrow", cls: "tomorrow" };
+    return { label: d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }), cls: "" };
+  }
+  const clock = (iso) => {
+    const d = new Date(iso);
+    return isNaN(d) ? "" : d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  };
+  const spots = (n) => `${n} spot${n === 1 ? "" : "s"}`;
   const timeAgo = (ms) => {
     const min = Math.round((Date.now() - ms) / 60000);
     if (min < 1) return "just now";
     if (min < 60) return `${min} min ago`;
     return `${Math.round(min / 60)} hr ago`;
   };
-  const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const CAT_EMOJI = ["🎤","🤝","🎨","🍽️","🛠️","🎉","☕","🧑‍💻"];
-  const emojiFor = (id) => CAT_EMOJI[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % CAT_EMOJI.length];
+  const PIN = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  const SHARE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>';
+  const ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>';
 
-  // ---- tiny synthesized UI sounds, no audio files needed ----
-  let actx;
-  function tone(freq, dur, type = "sine", gain = 0.05, delay = 0) {
-    try {
-      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      const t0 = actx.currentTime + delay;
-      const osc = actx.createOscillator();
-      const g = actx.createGain();
-      osc.type = type; osc.frequency.setValueAtTime(freq, t0);
-      g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-      osc.connect(g).connect(actx.destination);
-      osc.start(t0); osc.stop(t0 + dur + 0.02);
-    } catch {}
-  }
-  const sfx = {
-    tap: () => tone(720, 0.06, "sine", 0.04),
-    whoosh: () => { tone(340, 0.18, "sine", 0.05); tone(500, 0.18, "sine", 0.03, 0.05); },
-    success: () => { tone(660, 0.12, "sine", 0.05); tone(880, 0.16, "sine", 0.05, 0.09); },
+  // ============================================================
+  // sound: tiny synthesized UI sounds via Web Audio, no files
+  // ============================================================
+  const Sound = {
+    enabled: (() => { try { return localStorage.getItem("sfx") !== "off"; } catch { return true; } })(),
+    ctx: null,
+    ensure() {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === "suspended") this.ctx.resume();
+      return this.ctx;
+    },
+    tone({ freq, to = null, dur = 0.08, type = "sine", gain = 0.05, delay = 0 }) {
+      if (!this.enabled) return;
+      try {
+        const ctx = this.ensure();
+        const t0 = ctx.currentTime + delay;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t0);
+        if (to) osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(gain, t0 + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        osc.connect(g).connect(ctx.destination);
+        osc.start(t0); osc.stop(t0 + dur + 0.03);
+      } catch {}
+    },
+    noise({ dur = 0.35, from = 500, to = 2600, gain = 0.06 }) {
+      if (!this.enabled) return;
+      try {
+        const ctx = this.ensure();
+        const t0 = ctx.currentTime;
+        const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource(); src.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass"; filter.Q.value = 1.2;
+        filter.frequency.setValueAtTime(from, t0);
+        filter.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(gain, t0 + dur * 0.35);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        src.connect(filter).connect(g).connect(ctx.destination);
+        src.start(t0); src.stop(t0 + dur + 0.02);
+      } catch {}
+    },
+    tap() { this.tone({ freq: 900, to: 620, dur: 0.06, gain: 0.035 }); },
+    whoosh() { this.noise({}); this.tone({ freq: 300, to: 720, dur: 0.3, gain: 0.02 }); },
+    success() {
+      this.tone({ freq: 659, dur: 0.12, type: "triangle", gain: 0.05 });
+      this.tone({ freq: 880, dur: 0.14, type: "triangle", gain: 0.05, delay: 0.09 });
+      this.tone({ freq: 1175, dur: 0.22, type: "triangle", gain: 0.045, delay: 0.18 });
+    },
+    error() { this.tone({ freq: 240, to: 180, dur: 0.22, type: "square", gain: 0.025 }); },
+    toggle() {
+      this.enabled = !this.enabled;
+      try { localStorage.setItem("sfx", this.enabled ? "on" : "off"); } catch {}
+      $("soundToggle").setAttribute("aria-pressed", String(this.enabled));
+      if (this.enabled) this.tap();
+    },
   };
+  $("soundToggle").setAttribute("aria-pressed", String(Sound.enabled));
+  $("soundToggle").addEventListener("click", () => Sound.toggle());
 
+  // ============================================================
+  // toast
+  // ============================================================
   let toastTimer;
-  function toast(msg) {
+  function toast(msg, ms = 2800) {
     const el = $("toast");
     el.textContent = msg;
     el.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+    toastTimer = setTimeout(() => el.classList.remove("show"), ms);
   }
 
-  function eventCard(e, i) {
-    const badge = e.isSoldOut
-      ? '<span class="badge sold">Sold out</span>'
+  // ============================================================
+  // share (real action: native share sheet or copy link)
+  // ============================================================
+  async function share(title, url) {
+    Sound.tap();
+    try {
+      if (navigator.share) { await navigator.share({ title, url }); return; }
+    } catch (e) { if (e && e.name === "AbortError") return; }
+    try { await navigator.clipboard.writeText(url); toast("Link copied 🔗"); }
+    catch { toast("Could not copy the link."); }
+  }
+
+  // ============================================================
+  // building blocks
+  // ============================================================
+  function stackHtml(urls, { cls = "", max = 3, extra = 0 } = {}) {
+    const list = (urls ?? []).filter(Boolean).slice(0, max);
+    if (!list.length && !extra) return "";
+    const imgs = list.map((src) => `<img src="${escapeHtml(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`).join("");
+    const more = extra > 0 ? `<span class="more">+${extra > 99 ? "99" : extra}</span>` : "";
+    return `<span class="stack ${cls}">${imgs}${more}</span>`;
+  }
+
+  // photo block with graceful fallback (never a broken image)
+  function photoEl({ src, seed, emoji, href, short = false, tags = "" }) {
+    const box = document.createElement(href ? "a" : "div");
+    box.className = "photo" + (short ? " short" : "");
+    if (href) { box.href = href; box.target = "_blank"; box.rel = "noreferrer"; box.setAttribute("aria-label", "Open event"); }
+    const fallback = () => {
+      box.style.background = gradFor(seed);
+      const fb = document.createElement("span");
+      fb.className = "fb-emoji"; fb.textContent = emoji;
+      box.prepend(fb);
+    };
+    if (src) {
+      const img = new Image();
+      img.loading = "lazy"; img.decoding = "async"; img.alt = ""; img.referrerPolicy = "no-referrer";
+      img.addEventListener("error", () => { img.remove(); fallback(); });
+      img.src = src;
+      box.appendChild(img);
+    } else {
+      fallback();
+    }
+    if (tags) box.insertAdjacentHTML("beforeend", tags);
+    return box;
+  }
+
+  function attachPress(card) {
+    card.addEventListener("pointerdown", () => card.classList.add("pressed"));
+    const off = () => card.classList.remove("pressed");
+    card.addEventListener("pointerup", off);
+    card.addEventListener("pointerleave", off);
+    card.addEventListener("pointercancel", off);
+  }
+
+  function wireActions(card, { title, url, primaryLabel, primaryCls = "" }) {
+    const foot = card.querySelector(".actions");
+    if (!foot) return;
+    foot.innerHTML = `
+      <button class="btn icon" type="button" aria-label="Share">${SHARE}</button>
+      ${url ? `<a class="btn primary ${primaryCls}" href="${escapeHtml(url)}" target="_blank" rel="noreferrer"><span class="txt">${escapeHtml(primaryLabel)}</span>${ARROW}</a>` : ""}`;
+    foot.querySelector(".btn.icon").addEventListener("click", (ev) => { ev.preventDefault(); share(title, url || location.href); });
+    const primary = foot.querySelector(".btn.primary");
+    if (primary) primary.addEventListener("click", () => Sound.tap());
+    card.querySelectorAll(".photo, .title a").forEach((el) => el.addEventListener("click", () => Sound.tap()));
+  }
+
+  // ============================================================
+  // Luma cards
+  // ============================================================
+  function lumaCard(e, i) {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    const day = dayInfo(e.startAt);
+    const status = e.isSoldOut
+      ? '<span class="tag tl sold">💤 Sold out</span>'
       : e.isNearCapacity
-      ? `<span class="badge near">${e.spotsRemaining != null ? e.spotsRemaining + " spots left" : "Near capacity"}</span>`
-      : '<span class="badge open">Open</span>';
-    const where = [e.neighborhood, e.isFree ? "Free" : e.price].filter(Boolean).join(" · ");
-    const a = document.createElement("a");
-    a.className = "card";
-    a.style.animationDelay = `${Math.min(i, 8) * 0.045}s`;
-    a.href = e.url || "#";
-    a.target = "_blank";
-    a.rel = "noreferrer";
-    a.addEventListener("click", () => sfx.tap());
-    const thumbStyle = e.coverUrl ? `style="background-image:url('${e.coverUrl}')"` : "";
-    const avatars = (e.hostAvatars ?? []).length
-      ? `<span class="avatars">${e.hostAvatars.map((src) => `<img src="${src}" alt="" loading="lazy" />`).join("")}</span>`
-      : "";
-    a.innerHTML = `
-      <div class="thumb" ${thumbStyle}>${e.coverUrl ? "" : emojiFor(e.id)}</div>
+      ? `<span class="tag tl near">🔥 ${e.spotsRemaining != null ? spots(e.spotsRemaining) + " left" : "Near capacity"}</span>`
+      : '<span class="tag tl open">✨ Open</span>';
+    const priceTag = e.isFree ? '<span class="tag tr free">Free</span>' : e.price ? `<span class="tag tr price">${escapeHtml(e.price)}</span>` : "";
+    const where = [e.neighborhood, e.city || "San Francisco"].filter(Boolean).join(" · ");
+    const hosts = (e.hostAvatars ?? []).length;
+
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="when"><span class="day ${day.cls}">${escapeHtml(day.label)}</span>${e.startAt ? `<span>${clock(e.startAt)}</span>` : ""}</span>
+        <span class="src"><i style="background:var(--purple)"></i>Luma</span>
+      </div>
+      <div class="photo-slot"></div>
       <div class="card-body">
-        <div class="name">${escapeHtml(e.name)}</div>
-        <div class="when">${fmtTime(e.startAt)}${where ? " · " + escapeHtml(where) : ""}</div>
-        <div class="card-foot">${badge}${avatars}</div>
+        <h3 class="title"><a href="${escapeHtml(e.url || "#")}" target="_blank" rel="noreferrer">${escapeHtml(e.name)}</a></h3>
+        <div class="loc">${PIN}<span>${escapeHtml(where)}</span></div>
+        <div class="card-foot">
+          <div class="going">
+            ${stackHtml(e.hostAvatars, { cls: "sm" })}
+            <span>${e.guestCount != null ? `<b>${e.guestCount}</b> going` : hosts ? `${hosts} host${hosts > 1 ? "s" : ""}` : ""}${!e.isSoldOut && !e.isNearCapacity && e.spotsRemaining != null ? ` · ${spots(e.spotsRemaining)}` : ""}</span>
+          </div>
+          <div class="actions"></div>
+        </div>
       </div>`;
+    card.querySelector(".photo-slot").replaceWith(photoEl({
+      src: e.coverUrl, seed: e.id, emoji: emojiFor(e.id), href: e.url, tags: status + priceTag,
+    }));
+    wireActions(card, {
+      title: e.name, url: e.url,
+      primaryLabel: e.isSoldOut ? "See event" : e.requireApproval ? "Request spot" : "Grab a spot",
+      primaryCls: e.isSoldOut ? "dark" : e.isNearCapacity ? "hot" : "",
+    });
+    attachPress(card);
+    return card;
+  }
+
+  function railCard(e, i) {
+    const a = document.createElement("a");
+    a.className = "rail-card";
+    a.href = e.url || "#"; a.target = "_blank"; a.rel = "noreferrer";
+    a.style.animationDelay = `${Math.min(i, 8) * 0.06}s`;
+    a.addEventListener("click", () => Sound.tap());
+    const day = dayInfo(e.startAt);
+    const isToday = day.cls === "today";
+    a.innerHTML = `
+      <span class="shade"></span>
+      <span class="time ${isToday ? "now" : ""}">${escapeHtml(isToday ? "Today" : day.label)} · ${clock(e.startAt)}</span>
+      <span class="body">
+        ${stackHtml(e.hostAvatars, { max: 3 })}
+        <span class="title">${escapeHtml(e.name)}</span>
+        ${e.neighborhood ? `<span class="pin">${PIN}${escapeHtml(e.neighborhood)}</span>` : ""}
+      </span>`;
+    if (e.coverUrl) {
+      const img = new Image();
+      img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer";
+      img.addEventListener("error", () => { img.remove(); a.style.background = gradFor(e.id); a.insertAdjacentHTML("afterbegin", `<span class="fb-emoji">${emojiFor(e.id)}</span>`); });
+      img.src = e.coverUrl;
+      a.prepend(img);
+    } else {
+      a.style.background = gradFor(e.id);
+      a.insertAdjacentHTML("afterbegin", `<span class="fb-emoji">${emojiFor(e.id)}</span>`);
+    }
     return a;
   }
 
-  function renderEvents(events) {
-    const near = events.filter((e) => !e.isSoldOut && e.isNearCapacity);
-    const open = events.filter((e) => !e.isSoldOut && !e.isNearCapacity);
-    const sold = events.filter((e) => e.isSoldOut).slice(0, 10);
-    $("count-near").textContent = near.length;
-    $("count-open").textContent = open.length;
-    $("count-sold").textContent = sold.length;
-    for (const [id, list] of [["near", near], ["open", open], ["sold", sold]]) {
-      const el = $(id);
-      el.innerHTML = "";
-      if (!list.length) { el.innerHTML = '<p class="empty">Nothing here right now 🤍</p>'; continue; }
-      list.slice(0, 20).forEach((e, i) => el.appendChild(eventCard(e, i)));
+  // ============================================================
+  // Funcheap + Ticketmaster + perks cards
+  // ============================================================
+  function funcheapCard(p, i) {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    const emoji = FUN_EMOJI[hashStr(p.id) % FUN_EMOJI.length];
+    const pills = [
+      p.date ? `<span class="pill yellow">📅 ${escapeHtml(p.date)}</span>` : "",
+      p.cost ? `<span class="pill mint">${escapeHtml(p.cost)}</span>` : "",
+    ].join("");
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="when"><span class="day">Funcheap pick</span></span>
+        <span class="src"><i style="background:var(--yellow)"></i>sf.funcheap.com</span>
+      </div>
+      <div class="photo-slot"></div>
+      <div class="card-body">
+        <h3 class="title"><a href="${escapeHtml(p.url)}" target="_blank" rel="noreferrer">${escapeHtml(p.name)}</a></h3>
+        ${p.excerpt ? `<p class="excerpt">${escapeHtml(p.excerpt.trim())}${/[.!?…]$/.test(p.excerpt.trim()) ? "" : "…"}</p>` : ""}
+        ${pills ? `<div class="pillrow">${pills}</div>` : ""}
+        <div class="card-foot">
+          <div class="going"><span>Free or cheap, per Funcheap</span></div>
+          <div class="actions"></div>
+        </div>
+      </div>`;
+    card.querySelector(".photo-slot").replaceWith(photoEl({ src: p.image, seed: p.id, emoji, href: p.url, short: !p.image }));
+    wireActions(card, { title: p.name, url: p.url, primaryLabel: "Read more" });
+    attachPress(card);
+    return card;
+  }
+
+  function tmCard(e, i) {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    const day = dayInfo(e.startAt);
+    const where = [e.venue, e.neighborhood].filter(Boolean).join(" · ");
+    const tags = (e.classification ? `<span class="tag tl cat">${escapeHtml(e.classification)}</span>` : "")
+      + (e.price ? `<span class="tag tr ${e.price === "Free" ? "free" : "price"}">${escapeHtml(e.price)}</span>` : "");
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="when"><span class="day ${day.cls}">${escapeHtml(day.label)}</span>${e.isTimed && e.startAt ? `<span>${clock(e.startAt)}</span>` : ""}</span>
+        <span class="src"><i style="background:var(--pink)"></i>Ticketmaster</span>
+      </div>
+      <div class="photo-slot"></div>
+      <div class="card-body">
+        <h3 class="title"><a href="${escapeHtml(e.url || "#")}" target="_blank" rel="noreferrer">${escapeHtml(e.name)}</a></h3>
+        ${where ? `<div class="loc">${PIN}<span>${escapeHtml(where)}</span></div>` : ""}
+        <div class="card-foot">
+          <div class="going"><span>${e.isTimed ? "Ticketed" : "Time to be announced"}</span></div>
+          <div class="actions"></div>
+        </div>
+      </div>`;
+    card.querySelector(".photo-slot").replaceWith(photoEl({ src: e.imageUrl, seed: e.id, emoji: "🎟️", href: e.url, tags }));
+    wireActions(card, { title: e.name, url: e.url, primaryLabel: "Get tickets" });
+    attachPress(card);
+    return card;
+  }
+
+  // Instagram: dated events Gemini pulled out of captions, with the source post as the photo
+  function igCard(e, i) {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    const iso = `${e.startDate}T${e.startTime || "12:00"}:00`;
+    const day = dayInfo(iso);
+    const tags = e.cost ? `<span class="tag tr ${/^free/i.test(e.cost) ? "free" : "price"}">${escapeHtml(e.cost)}</span>` : "";
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="when"><span class="day ${day.cls}">${escapeHtml(day.label)}</span>${e.startTime ? `<span>${clock(iso)}</span>` : ""}</span>
+        <span class="src"><i style="background:var(--purple)"></i>@${escapeHtml(e.handle || "instagram")}</span>
+      </div>
+      <div class="photo-slot"></div>
+      <div class="card-body">
+        <h3 class="title"><a href="${escapeHtml(e.sourceUrl || "#")}" target="_blank" rel="noreferrer">${escapeHtml(e.name)}</a></h3>
+        ${e.venue ? `<div class="loc">${PIN}<span>${escapeHtml(e.venue)}</span></div>` : ""}
+        ${e.oneLine ? `<p class="excerpt">${escapeHtml(e.oneLine)}</p>` : ""}
+        <div class="card-foot">
+          <div class="going"><span>Spotted on Instagram</span></div>
+          <div class="actions"></div>
+        </div>
+      </div>`;
+    card.querySelector(".photo-slot").replaceWith(photoEl({ src: e.imageUrl, seed: e.id, emoji: "📸", href: e.sourceUrl, tags }));
+    wireActions(card, { title: e.name, url: e.sourceUrl, primaryLabel: "See the post" });
+    attachPress(card);
+    return card;
+  }
+
+  // fallback when no dated events could be extracted: the raw recent posts
+  function igPostCard(p, i) {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    const text = (p.caption || "").split("\n").filter(Boolean).slice(0, 2).join(" ");
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="when"><span class="day">${escapeHtml(timeAgo(new Date(p.postedAt).getTime()))}</span></span>
+        <span class="src"><i style="background:var(--purple)"></i>@${escapeHtml(p.handle || "instagram")}</span>
+      </div>
+      <div class="photo-slot"></div>
+      <div class="card-body">
+        ${text ? `<p class="excerpt">${escapeHtml(text.slice(0, 180))}${text.length > 180 ? "…" : ""}</p>` : ""}
+        ${p.location ? `<div class="loc">${PIN}<span>${escapeHtml(p.location)}</span></div>` : ""}
+        <div class="card-foot">
+          <div class="going"><span>${p.likes != null ? `${p.likes} likes` : "Recent post"}</span></div>
+          <div class="actions"></div>
+        </div>
+      </div>`;
+    card.querySelector(".photo-slot").replaceWith(photoEl({ src: p.imageUrl, seed: p.id, emoji: "📸", href: p.url }));
+    wireActions(card, { title: `@${p.handle}`, url: p.url, primaryLabel: "Open post" });
+    attachPress(card);
+    return card;
+  }
+
+  const PERK_EMOJI = ["🌷", "🍵", "🌺", "🖼️", "🎋", "🌿"];
+  function perkCard(p, i) {
+    const card = document.createElement("article");
+    card.className = "perk";
+    card.style.animationDelay = `${i * 0.06}s`;
+    card.innerHTML = `
+      <div class="tile" style="background:${gradFor(p.name)}">${PERK_EMOJI[i % PERK_EMOJI.length]}</div>
+      <div class="pb">
+        <div class="pname">${escapeHtml(p.name)} <span class="pill mint">Free</span></div>
+        <div class="offer">${escapeHtml(p.offer)}</div>
+        ${p.note ? `<div class="note">${escapeHtml(p.note)}</div>` : ""}
+        <div class="actions"></div>
+      </div>`;
+    wireActions(card, { title: p.name, url: p.url, primaryLabel: "Details" });
+    return card;
+  }
+
+  // ============================================================
+  // panel states
+  // ============================================================
+  const stateHtml = ({ emoji, title, body, retry }) => `
+    <div class="state">
+      <span class="big">${emoji}</span>
+      <h3>${title}</h3>
+      <p>${body}</p>
+      ${retry ? `<button class="btn primary" type="button" data-retry="${retry}">Try again</button>` : ""}
+    </div>`;
+  const emptyHtml = (msg = "Nothing here right now 🤍") => stateHtml({ emoji: "🫧", title: msg, body: "Check back after the next sweep." });
+  const skeletonHtml = (n = 3) => Array.from({ length: n }, () => `
+    <div class="skel"><div class="box"></div><div class="bar w60"></div><div class="bar w35"></div></div>`).join("");
+
+  function renderList(panel, items, cardFn, { initial = 20, rail = null } = {}) {
+    panel.innerHTML = "";
+    if (!items.length) { panel.innerHTML = emptyHtml(); return; }
+    // the rail only earns its place when it is a real subset, not the whole list again
+    if (rail && rail.length >= 2 && items.length >= rail.length + 3) {
+      panel.insertAdjacentHTML("beforeend", `
+        <div class="section-head"><h2>Soonest</h2><span class="hint">next 48 hours · ${rail.length}</span></div>
+        <div class="rail"></div>
+        <div class="section-head"><h2>All ${items.length}</h2><span class="hint">by start time</span></div>`);
+      const railEl = panel.querySelector(".rail");
+      rail.forEach((e, i) => railEl.appendChild(railCard(e, i)));
+    }
+    const frag = document.createDocumentFragment();
+    items.slice(0, initial).forEach((it, i) => frag.appendChild(cardFn(it, i)));
+    panel.appendChild(frag);
+    if (items.length > initial) {
+      const btn = document.createElement("button");
+      btn.className = "more-btn"; btn.type = "button";
+      btn.textContent = `Show ${items.length - initial} more`;
+      btn.addEventListener("click", () => {
+        Sound.tap();
+        const f = document.createDocumentFragment();
+        items.slice(initial).forEach((it, i) => f.appendChild(cardFn(it, i)));
+        btn.replaceWith(f);
+      });
+      panel.appendChild(btn);
     }
   }
 
+  function setCount(id, value) {
+    const el = $(id);
+    if (String(el.textContent) === String(value)) return;
+    el.textContent = value;
+    const chip = el.closest(".chip");
+    chip.classList.remove("bump"); void chip.offsetWidth; chip.classList.add("bump");
+  }
+
+  // ============================================================
+  // loaders
+  // ============================================================
+  const state = { events: [], funcheap: [], tm: null, ig: null, perks: [], eventsAt: 0 };
+
+  function renderEvents(events) {
+    const byStart = (a, b) => new Date(a.startAt || 0) - new Date(b.startAt || 0);
+    const near = events.filter((e) => !e.isSoldOut && e.isNearCapacity).sort(byStart);
+    const open = events.filter((e) => !e.isSoldOut && !e.isNearCapacity).sort(byStart);
+    const sold = events.filter((e) => e.isSoldOut).sort(byStart);
+    setCount("count-near", near.length);
+    setCount("count-open", open.length);
+    setCount("count-sold", sold.length);
+    const soon = (list) => {
+      const now = Date.now(), cutoff = now + 48 * 3600 * 1000;
+      return list.filter((e) => { const t = new Date(e.startAt).getTime(); return t >= now - 3600 * 1000 && t <= cutoff; }).slice(0, 8);
+    };
+    renderList($("near"), near, lumaCard, { initial: 20, rail: soon(near) });
+    renderList($("open"), open, lumaCard, { initial: 16, rail: soon(open) });
+    renderList($("sold"), sold, lumaCard, { initial: 10 });
+
+    // hero host strip: real host avatars from the live events
+    const seen = new Set();
+    const avatars = [];
+    for (const e of events) for (const a of e.hostAvatars ?? []) if (a && !seen.has(a)) { seen.add(a); avatars.push(a); }
+    const free = events.filter((e) => e.isFree).length;
+    const strip = $("hostStrip");
+    strip.innerHTML = avatars.length
+      ? `${stackHtml(avatars, { max: 6 })}<span class="label"><b>${avatars.length}</b> hosts · <b>${events.length}</b> events · <b>${free}</b> free</span>`
+      : `<span class="label"><b>${events.length}</b> events this month</span>`;
+    strip.classList.add("show");
+    $("totals").textContent = `${events.length} events · 30 days`;
+  }
+
   async function loadEvents(force) {
-    const fab = $("refresh");
-    fab.classList.add("spin");
+    if (!state.events.length) ["near", "open", "sold"].forEach((id) => { $(id).innerHTML = skeletonHtml(); });
     try {
       const res = await fetch(`/api/events${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      renderEvents(data.events);
-      $("updated").textContent = `Last checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : ""}`;
-      if (force) {
-        sfx.success();
-        toast(data.fromCache ? "Checked very recently, showing cached results to go easy on Luma." : "Fresh sweep done ✨");
-      }
+      state.events = data.events ?? [];
+      state.eventsAt = data.updatedAt;
+      renderEvents(state.events);
+      $("dot").classList.remove("off");
+      $("updated").textContent = `Checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : " · live"}`;
+      return { fresh: !data.fromCache, count: state.events.length };
     } catch (err) {
-      toast(err.message || "Something went wrong.");
-    } finally {
-      fab.classList.remove("spin");
+      if (!state.events.length) {
+        const html = stateHtml({ emoji: "🌫️", title: "Luma is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "events" });
+        ["near", "open", "sold"].forEach((id) => { $(id).innerHTML = html; });
+        $("dot").classList.add("off");
+        $("updated").textContent = "Luma unreachable";
+      }
+      throw err;
     }
   }
 
-  function funcheapCard(p, i) {
-    const a = document.createElement("a");
-    a.className = "card";
-    a.style.animationDelay = `${Math.min(i, 8) * 0.045}s`;
-    a.href = p.url; a.target = "_blank"; a.rel = "noreferrer";
-    a.addEventListener("click", () => sfx.tap());
-    const thumbStyle = p.image ? `style="background-image:url('${p.image}')"` : "";
-    const when = [p.date, p.cost].filter(Boolean).join(" · ") || p.excerpt;
-    a.innerHTML = `
-      <div class="thumb" ${thumbStyle}>${p.image ? "" : "🎈"}</div>
-      <div class="card-body">
-        <div class="name">${escapeHtml(p.name)}</div>
-        <div class="when">${escapeHtml(when)}</div>
-      </div>`;
-    return a;
-  }
-
-  async function loadFuncheap() {
+  async function loadFuncheap(force) {
+    const el = $("funcheap");
+    if (!state.funcheap.length) el.innerHTML = skeletonHtml(2);
     try {
-      const res = await fetch("/api/funcheap");
+      const res = await fetch(`/api/funcheap${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      $("count-funcheap").textContent = data.posts.length;
-      const el = $("funcheap");
+      state.funcheap = data.posts ?? [];
+      setCount("count-funcheap", state.funcheap.length);
+      renderList(el, state.funcheap, funcheapCard, { initial: 12 });
+      return { fresh: !data.fromCache, count: state.funcheap.length };
+    } catch (err) {
+      if (!state.funcheap.length) {
+        el.innerHTML = stateHtml({ emoji: "🎈", title: "Funcheap is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "funcheap" });
+      }
+      throw err;
+    }
+  }
+
+  async function loadTicketmaster(force) {
+    const el = $("tm");
+    if (!state.tm) el.innerHTML = skeletonHtml(2);
+    try {
+      const res = await fetch(`/api/ticketmaster${force ? "?refresh=1" : ""}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      state.tm = data;
+      if (!data.configured) {
+        setCount("count-tm", "–");
+        el.innerHTML = stateHtml({
+          emoji: "🎟️",
+          title: "Ticketmaster isn't connected yet",
+          body: "Concerts, sports and theater show up here once a free Discovery API key is set as <code>TICKETMASTER_API_KEY</code> on the server. Nothing is broken, this lane is just switched off.",
+        });
+        return { fresh: false, count: 0, off: true };
+      }
+      const events = data.events ?? [];
+      setCount("count-tm", events.length);
+      renderList(el, events, tmCard, { initial: 16 });
+      return { fresh: !data.fromCache, count: events.length };
+    } catch (err) {
+      if (!state.tm) {
+        el.innerHTML = stateHtml({ emoji: "🎟️", title: "Ticketmaster is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "tm" });
+      }
+      throw err;
+    }
+  }
+
+  async function loadInstagram(force) {
+    const el = $("ig");
+    if (!state.ig) el.innerHTML = skeletonHtml(2);
+    try {
+      const res = await fetch(`/api/instagram${force ? "?refresh=1" : ""}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      state.ig = data;
+      if (!data.configured) {
+        setCount("count-ig", "–");
+        el.innerHTML = stateHtml({
+          emoji: "📸",
+          title: "Instagram isn't connected yet",
+          body: "Events spotted on SF Instagram accounts show up here once <code>APIFY_API_KEY</code> is set on the server. Nothing is broken, this lane is just switched off.",
+        });
+        return { fresh: false, count: 0, off: true };
+      }
+      const events = data.events ?? [];
+      const posts = data.posts ?? [];
+      const handles = (data.accounts ?? []).map((h) => `@${h}`).join(", ");
       el.innerHTML = "";
-      if (!data.posts.length) { el.innerHTML = '<p class="empty">Nothing here right now 🤍</p>'; return; }
-      data.posts.forEach((p, i) => el.appendChild(funcheapCard(p, i)));
-    } catch {
-      $("funcheap").innerHTML = '<p class="empty">Could not reach Funcheap right now.</p>';
+      if (events.length) {
+        setCount("count-ig", events.length);
+        el.insertAdjacentHTML("beforeend", `<div class="section-head"><h2>Dated events from captions</h2><span class="hint">${events.length} found · ${posts.length} posts read</span></div>`);
+        const frag = document.createDocumentFragment();
+        events.forEach((e, i) => frag.appendChild(igCard(e, i)));
+        el.appendChild(frag);
+      } else if (posts.length) {
+        setCount("count-ig", posts.length);
+        el.insertAdjacentHTML("beforeend", `<div class="section-head"><h2>Recent posts</h2><span class="hint">no dated events found yet</span></div>`);
+        const frag = document.createDocumentFragment();
+        posts.slice(0, 12).forEach((p, i) => frag.appendChild(igPostCard(p, i)));
+        el.appendChild(frag);
+      } else {
+        setCount("count-ig", 0);
+        el.innerHTML = emptyHtml(data.refreshing ? "First scrape is running, check back in a couple of minutes" : "Nothing posted in the last 30 days");
+      }
+      el.insertAdjacentHTML("beforeend", `<p class="hint" style="margin:14px 2px 0;font-size:11.5px;color:var(--muted);font-weight:600;">Reading ${escapeHtml(handles)}. Scraped, not an official feed, so treat it as a tip, not a guarantee.${data.refreshing ? " A fresh scrape is running in the background." : ""}</p>`);
+      return { fresh: !data.fromCache, count: events.length || posts.length };
+    } catch (err) {
+      if (!state.ig) {
+        el.innerHTML = stateHtml({ emoji: "📸", title: "Instagram is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "ig" });
+      }
+      throw err;
     }
   }
 
   async function loadPerks() {
-    const res = await fetch("/api/perks");
-    const data = await res.json();
     const el = $("perks");
-    el.innerHTML = "";
-    data.perks.forEach((p, i) => {
-      const a = document.createElement("a");
-      a.className = "perk-card";
-      a.style.animationDelay = `${i * 0.05}s`;
-      a.href = p.url; a.target = "_blank"; a.rel = "noreferrer";
-      a.addEventListener("click", () => sfx.tap());
-      a.innerHTML = `<div class="perk-name">🌷 ${escapeHtml(p.name)}</div><div class="perk-offer">${escapeHtml(p.offer)}${p.note ? " — " + escapeHtml(p.note) : ""}</div>`;
-      el.appendChild(a);
-    });
-    $("footer").textContent = `Perks list hand-checked as of ${data.verifiedOn}.`;
+    el.innerHTML = skeletonHtml(2);
+    try {
+      const res = await fetch("/api/perks");
+      const data = await res.json();
+      state.perks = data.perks ?? [];
+      setCount("count-perks", state.perks.length);
+      el.innerHTML = "";
+      if (!state.perks.length) { el.innerHTML = emptyHtml(); return; }
+      el.insertAdjacentHTML("beforeend", `<div class="section-head"><h2>Free admission, hand-checked</h2><span class="hint">as of ${escapeHtml(data.verifiedOn)}</span></div>`);
+      state.perks.forEach((p, i) => el.appendChild(perkCard(p, i)));
+      $("footer").innerHTML = `Perks hand-checked as of ${escapeHtml(data.verifiedOn)}. Events come straight from <a href="https://luma.com/discover/sf" target="_blank" rel="noreferrer">Luma</a>, <a href="https://sf.funcheap.com" target="_blank" rel="noreferrer">Funcheap</a> and a handful of SF Instagram accounts, cached briefly to be polite to them.`;
+    } catch {
+      el.innerHTML = stateHtml({ emoji: "🌷", title: "Perks list didn't load", body: "Refresh the page to try again.", retry: "perks" });
+    }
   }
 
-  // tabs
-  document.getElementById("chips").addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".chip");
+  // retry buttons inside state cards
+  document.addEventListener("click", (ev) => {
+    const btn = ev.target.closest("[data-retry]");
     if (!btn) return;
-    sfx.tap();
-    document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
-    btn.classList.add("active");
-    ["near", "open", "sold", "funcheap", "perks"].forEach((id) => { $(id).hidden = id !== btn.dataset.tab; });
+    Sound.tap();
+    const which = btn.dataset.retry;
+    ({ events: () => loadEvents(false), funcheap: () => loadFuncheap(false), tm: () => loadTicketmaster(false), ig: () => loadInstagram(false), perks: loadPerks })[which]?.().catch(() => {});
   });
 
-  $("refresh").addEventListener("click", () => { sfx.whoosh(); loadEvents(true); });
+  // ============================================================
+  // tabs (real sections, hash-addressable)
+  // ============================================================
+  const TABS = ["near", "open", "sold", "funcheap", "tm", "ig", "perks"];
+  function replayEntrance(panel) {
+    panel.querySelectorAll(".card, .perk, .rail-card, .state").forEach((el, i) => {
+      el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
+      if (el.classList.contains("rail-card")) el.style.animationDelay = `${Math.min(i, 8) * 0.06}s`;
+    });
+  }
+  function showTab(id, { silent = false, push = true } = {}) {
+    if (!TABS.includes(id)) id = "near";
+    document.querySelectorAll(".chip").forEach((c) => {
+      const on = c.dataset.tab === id;
+      c.classList.toggle("active", on);
+      c.setAttribute("aria-selected", String(on));
+      if (on) c.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    });
+    TABS.forEach((t) => { $(t).hidden = t !== id; });
+    replayEntrance($(id));
+    if (!silent) Sound.tap();
+    if (push) history.replaceState(null, "", `#${id}`);
+    const chipbar = $("chipbar");
+    if (chipbar.classList.contains("stuck")) window.scrollTo({ top: chipbar.offsetTop - 4, behavior: "smooth" });
+  }
+  $("chips").addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".chip");
+    if (btn) showTab(btn.dataset.tab);
+  });
+  window.addEventListener("hashchange", () => showTab(location.hash.slice(1), { silent: true, push: false }));
 
-  loadEvents(false);
-  loadFuncheap();
+  // sticky chip bar shadow
+  const sentinel = document.createElement("div");
+  $("chipbar").before(sentinel);
+  new IntersectionObserver(([e]) => $("chipbar").classList.toggle("stuck", !e.isIntersecting), { rootMargin: "-1px 0px 0px 0px", threshold: 0 }).observe(sentinel);
+
+  // ============================================================
+  // the one real action: run the sweep now
+  // ============================================================
+  let sweeping = false;
+  async function runSweep() {
+    if (sweeping) return;
+    sweeping = true;
+    const fab = $("refresh");
+    fab.classList.add("busy"); fab.classList.remove("done");
+    $("fabLabel").textContent = "Sweeping…";
+    Sound.whoosh();
+    const started = Date.now();
+    const results = await Promise.allSettled([loadEvents(true), loadFuncheap(true), loadTicketmaster(true), loadInstagram(true)]);
+    await new Promise((r) => setTimeout(r, Math.max(0, 700 - (Date.now() - started)))); // let the spinner read as a real action
+    const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
+    const failed = results.length - ok.length;
+    const fresh = ok.filter((r) => r.fresh);
+    fab.classList.remove("busy"); fab.classList.add("done");
+    $("fabLabel").textContent = "Run sweep";
+    sweeping = false;
+    if (!ok.length) { Sound.error(); toast("Every source was unreachable. Try again in a minute."); return; }
+    Sound.success();
+    if (fresh.length) {
+      const total = fresh.reduce((a, r) => a + r.count, 0);
+      toast(`Fresh sweep done ✨ ${total} live listings${failed ? `, ${failed} source unreachable` : ""}`);
+    } else {
+      toast("Checked very recently, showing cached results to go easy on the sources.");
+    }
+  }
+  $("refresh").addEventListener("click", runSweep);
+
+  // ============================================================
+  // boot
+  // ============================================================
+  showTab(location.hash.slice(1) || "near", { silent: true, push: false });
+  loadEvents(false).catch(() => {});
+  loadFuncheap().catch(() => {});
+  loadTicketmaster().catch(() => {});
+  loadInstagram().catch(() => {});
   loadPerks();
+  setInterval(() => { if (state.eventsAt) $("updated").textContent = $("updated").textContent.replace(/^Checked .*?(?= ·|$)/, `Checked ${timeAgo(state.eventsAt)}`); }, 60000);
 </script>
 </body>
 </html>
