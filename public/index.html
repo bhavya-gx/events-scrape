@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#FFFFFF" />
 <title>SF perks + AI events sweep</title>
+<meta name="description" content="Live San Francisco events with real spots remaining, free things to do around the city, and hand-checked perks. No account needed." />
+<meta property="og:title" content="What's on in SF" />
+<meta property="og:description" content="Live SF events with real spots remaining, free things to do, and hand-checked perks. No account needed." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23111114'/%3E%3Ccircle cx='32' cy='27' r='9' fill='none' stroke='%23fff' stroke-width='5'/%3E%3Cpath d='M32 36v14' stroke='%23fff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -112,7 +118,7 @@
   .hc .ph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease-out); }
   .hc:hover .ph img { transform: scale(1.06); }
   .hc .ph .fb { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; }
-  .hc .ph .pin { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); background: rgba(255,255,255,0.94); color: var(--ink); font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 999px; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; animation: popIn 0.5s var(--ease-pop) 0.2s both; }
+  .hc .ph .pin { position: absolute; left: 7px; bottom: 7px; max-width: calc(100% - 14px); background: rgba(255,255,255,0.94); color: var(--ink); font-size: 9.5px; font-weight: 600; padding: 4px 7px; border-radius: 999px; display: flex; align-items: center; gap: 3px; white-space: nowrap; overflow: hidden; animation: popIn 0.5s var(--ease-pop) 0.2s both; }
   .hc .ph .pin svg { width: 11px; height: 11px; flex-shrink: 0; }
   .hc .ph .pin span { overflow: hidden; text-overflow: ellipsis; }
   .hc .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 2px 4px 2px 0; }
@@ -127,6 +133,9 @@
   .more-btn { margin-top: 14px; width: 100%; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 13px; font-weight: 600; padding: 12px; border-radius: 14px; transition: transform 0.18s var(--ease-pop), background 0.18s ease; }
   .more-btn:hover { background: #FAFAFC; }
   .more-btn:active { transform: scale(0.98); }
+  .more-btn svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; }
+  .more-btn.busy { color: var(--muted); }
+  .more-btn.busy svg { animation: spin 0.9s linear infinite; }
   .state { padding: 22px 16px; text-align: center; background: #FAFAFC; border-radius: var(--r-lg); margin-top: 14px; }
   .rail .state { flex: 1; margin-top: 0; }
   .state .big { font-size: 30px; display: block; margin-bottom: 6px; animation: floaty 3s ease-in-out infinite; }
