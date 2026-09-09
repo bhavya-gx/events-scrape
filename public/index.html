@@ -3,636 +3,393 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#E6DEFF" />
+<meta name="theme-color" content="#FFFFFF" />
 <title>SF perks + AI events sweep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
+    --bg: #FFFFFF;
+    --ink: #111114;
+    --text: #1C1C21;
+    --muted: #8A8A93;
+    --faint: #C9C9D1;
+    --chip: #F2F2F6;
+    --line: #EDEDF1;
+    --blue: #2F7DF6;
+    --blue-soft: #E9F1FF;
+    --green: #1FA971;
+    --green-soft: #E6F7EF;
     --pink: #FF2D78;
-    --purple: #7B5CFF;
-    --purple-deep: #5B3FE6;
-    --mint: #2BD4A8;
-    --yellow: #FFC93C;
-    --lavender: #E4DDFF;
-    --periwinkle: #DAE4FF;
-    --ink: #17131F;
-    --muted: #8A8499;
-    --bg: #F7F6FB;
-    --card: #FFFFFF;
-    --soft: #F3F0FA;
-    --line: #ECE8F4;
-    --shadow-card: 0 2px 6px rgba(60, 45, 110, 0.04), 0 12px 28px rgba(60, 45, 110, 0.07);
-    --shadow-lift: 0 6px 14px rgba(60, 45, 110, 0.08), 0 22px 44px rgba(60, 45, 110, 0.14);
-    --radius-card: 24px;
-    --radius-photo: 18px;
-    --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+    --pink-soft: #FFE8F0;
+    --shadow-card: 0 10px 30px rgba(20, 20, 30, 0.08);
+    --shadow-nav: 0 14px 34px rgba(20, 20, 30, 0.16);
+    --r-lg: 24px;
+    --r-md: 18px;
     --ease-out: cubic-bezier(.2, .8, .2, 1);
+    --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Poppins", system-ui, -apple-system, sans-serif;
-    padding-bottom: 132px;
-    -webkit-font-smoothing: antialiased;
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Poppins", -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; padding-bottom: 118px;
   }
-  button { font-family: inherit; }
-  a { color: inherit; }
-  .wrap { max-width: 640px; margin: 0 auto; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 20px; }
 
-  /* ===== hero ===== */
-  .hero {
-    background: linear-gradient(170deg, var(--lavender) 0%, var(--periwinkle) 55%, var(--bg) 100%);
-    padding: 34px 22px 18px;
-    position: relative;
-    overflow: hidden;
+  /* ---------- header ---------- */
+  header { padding: 22px 0 6px; }
+  .top { display: flex; align-items: center; gap: 12px; }
+  .me {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #FF9AC4, #7B5CFF); display: grid; place-items: center;
+    font-size: 17px; box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px var(--line);
   }
-  .hero::before, .hero::after {
-    content: ""; position: absolute; border-radius: 50%; pointer-events: none; filter: blur(6px);
+  .hello { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; margin: 0; flex: 1; min-width: 0; }
+  .iconbtn {
+    width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--chip);
+    display: grid; place-items: center; color: var(--ink);
+    transition: transform 0.18s var(--ease-pop), background 0.18s ease;
   }
-  .hero::before {
-    top: -90px; right: -60px; width: 240px; height: 240px;
-    background: radial-gradient(circle, rgba(255,45,120,0.16), transparent 68%);
-    animation: drift 9s ease-in-out infinite;
-  }
-  .hero::after {
-    bottom: -60px; left: -50px; width: 220px; height: 220px;
-    background: radial-gradient(circle, rgba(43,212,168,0.16), transparent 68%);
-    animation: drift 11s ease-in-out infinite reverse;
-  }
-  @keyframes drift {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-14px, 12px); }
-  }
-  .hero-inner { position: relative; z-index: 1; }
-  .greet-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .greet { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0; line-height: 1.15; }
-  .greet .wave { display: inline-block; animation: wave 2.4s ease-in-out infinite; transform-origin: 70% 70%; font-size: 24px; }
-  @keyframes wave {
-    0%, 60%, 100% { transform: rotate(0deg); }
-    10% { transform: rotate(14deg); }
-    20% { transform: rotate(-8deg); }
-    30% { transform: rotate(14deg); }
-    40% { transform: rotate(-4deg); }
-  }
-  .greet-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .icon-btn {
-    width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.9);
-    background: rgba(255,255,255,0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    display: grid; place-items: center; cursor: pointer; color: var(--ink);
-    transition: transform 0.2s var(--ease-pop), background 0.2s ease;
-  }
-  .icon-btn:hover { background: #fff; }
-  .icon-btn:active { transform: scale(0.88); }
-  .icon-btn[aria-pressed="false"] { color: var(--muted); }
-  .icon-btn[aria-pressed="true"] .ico-off { display: none; }
-  .icon-btn[aria-pressed="false"] .ico-on { display: none; }
-  .avatar-blob {
-    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--pink), var(--purple));
-    display: grid; place-items: center; font-size: 20px;
-    box-shadow: 0 6px 16px rgba(123,92,255,0.3);
-    border: 2.5px solid #fff;
-  }
-  .sub { color: #625B78; font-size: 13.5px; line-height: 1.5; margin: 8px 0 0; max-width: 460px; font-weight: 500; }
+  .iconbtn:active { transform: scale(0.9); }
+  .iconbtn[aria-pressed="false"] { color: var(--muted); }
+  .iconbtn svg { width: 18px; height: 18px; }
+  .lede { margin: 12px 0 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-soft); flex-shrink: 0; }
+  .status .dot.off { background: #F0B429; box-shadow: 0 0 0 3px #FFF3D6; }
 
-  .host-strip {
-    display: flex; align-items: center; gap: 10px; margin-top: 18px; min-height: 30px;
-    opacity: 0; transform: translateY(6px); transition: opacity 0.4s ease, transform 0.4s var(--ease-out);
+  /* ---------- sections ---------- */
+  section { margin-top: 26px; scroll-margin-top: 12px; }
+  .sh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sh h2 { font-size: 17px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .sh .sub { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
+  .chev {
+    width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--chip);
+    display: grid; place-items: center; color: var(--ink); flex-shrink: 0;
+    transition: transform 0.18s var(--ease-pop);
   }
-  .host-strip.show { opacity: 1; transform: none; }
-  .host-strip .label { font-size: 12.5px; font-weight: 500; color: #625B78; }
-  .host-strip .label b { color: var(--ink); font-weight: 700; }
+  .chev:active { transform: scale(0.88); }
+  .chev svg { width: 14px; height: 14px; }
+  .sh.faint h2 { color: var(--faint); }
+  .sh.faint .chev { background: #F7F7F9; color: var(--faint); }
 
-  .stack { display: flex; align-items: center; }
-  .stack img, .stack .more {
-    width: 30px; height: 30px; border-radius: 50%; object-fit: cover;
-    border: 2px solid #fff; margin-left: -10px; background: var(--soft);
-  }
-  .stack img:first-child, .stack .more:first-child { margin-left: 0; }
-  .stack .more {
-    display: grid; place-items: center; font-size: 10px; font-weight: 700;
-    background: var(--ink); color: #fff;
-  }
-  .stack.sm img, .stack.sm .more { width: 26px; height: 26px; margin-left: -9px; }
-  .stack.sm img:first-child, .stack.sm .more:first-child { margin-left: 0; }
-
-  /* ===== sticky chips ===== */
-  .chipbar {
-    position: sticky; top: 0; z-index: 30;
-    background: rgba(247,246,251,0.86);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    padding: 8px 22px 8px;
-    transition: box-shadow 0.25s ease;
-  }
-  .chipbar[hidden] { display: none; }
-  .chipbar.stuck { box-shadow: 0 8px 24px rgba(60,45,110,0.06); }
-  .chiprow {
-    display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 4px;
-    scrollbar-width: none; scroll-snap-type: x proximity;
-  }
-  .chiprow::-webkit-scrollbar { display: none; }
-  .chip {
-    flex-shrink: 0; scroll-snap-align: start;
-    font-weight: 600; font-size: 13px;
-    border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px;
-    background: #fff; color: var(--ink);
-    cursor: pointer;
-    transition: transform 0.2s var(--ease-pop), background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    display: flex; align-items: center; gap: 6px; line-height: 1;
-  }
-  .chip:hover { border-color: #D9D2EE; }
-  .chip .n { font-weight: 500; color: var(--muted); transition: color 0.2s ease; }
-  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .chip.active .n { color: rgba(255,255,255,0.7); }
-  .chip:active { transform: scale(0.94); }
-  .chip.bump .n { animation: bump 0.45s var(--ease-pop); display: inline-block; }
-  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
-
-  /* ===== main ===== */
-  main { padding: 4px 22px 0; }
-  .meta-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    font-size: 11.5px; color: var(--muted); font-weight: 500; margin: 8px 2px 14px;
-  }
-  .meta-row > span:last-child { white-space: nowrap; flex-shrink: 0; }
-  .meta-row .dot {
-    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-    background: var(--mint); margin-right: 7px; animation: pulse 1.8s ease-in-out infinite;
-    box-shadow: 0 0 0 3px rgba(43,212,168,0.18);
-  }
-  .meta-row .dot.off { background: var(--yellow); box-shadow: 0 0 0 3px rgba(255,201,60,0.2); }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
-
-  .panel[hidden] { display: none; }
-
-  .section-head {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-    margin: 10px 2px 12px;
-  }
-  .section-head h2 { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .section-head .hint { font-size: 12px; color: var(--muted); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
-  .section-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); font-weight: 500; }
-  .section-head.stacked { display: block; }
-
-  /* ===== rail (soonest) ===== */
+  /* rail of big square photo cards, pin + avatars under each */
   .rail {
-    display: flex; gap: 12px; overflow-x: auto; padding: 4px 22px 18px; margin: 0 -22px 4px;
+    display: flex; gap: 14px; overflow-x: auto; padding: 14px 20px 6px; margin: 0 -20px;
     scroll-snap-type: x mandatory; scrollbar-width: none;
   }
   .rail::-webkit-scrollbar { display: none; }
-  .rail-card {
-    flex: 0 0 176px; height: 236px; border-radius: 22px; position: relative; overflow: hidden;
-    scroll-snap-align: start; text-decoration: none; color: #fff; display: block;
-    background: var(--soft);
-    box-shadow: var(--shadow-card);
-    transition: transform 0.25s var(--ease-pop), box-shadow 0.25s ease;
-    opacity: 0; transform: translateX(16px);
-    animation: slide 0.55s var(--ease-out) forwards;
+  .tile { flex: 0 0 186px; scroll-snap-align: start; }
+  .tile .ph {
+    display: block; width: 186px; height: 186px; border-radius: var(--r-lg); overflow: hidden;
+    background: var(--chip); position: relative; box-shadow: var(--shadow-card);
   }
-  .rail-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
-  .rail-card:active { transform: scale(0.96); }
-  .rail-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .rail-card .shade {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 30%, rgba(10,6,20,0.82) 100%);
+  .tile .ph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--ease-out); }
+  .tile .ph:hover img { transform: scale(1.04); }
+  .tile .ph .fb { position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; }
+  .tile .ph .time {
+    position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92);
+    color: var(--ink); font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 999px;
   }
-  .rail-card .time {
-    position: absolute; top: 12px; left: 12px;
-    font-size: 10.5px; font-weight: 700; padding: 6px 10px; border-radius: 999px;
-    background: rgba(255,255,255,0.92); color: var(--ink);
-  }
-  .rail-card .time.now { background: var(--yellow); }
-  .rail-card .stack img { position: static; width: 26px; height: 26px; margin-left: -9px; border-color: #fff; }
-  .rail-card .stack img:first-child { margin-left: 0; }
-  .rail-card .body { position: absolute; left: 12px; right: 12px; bottom: 12px; }
-  .rail-card .row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 8px; min-height: 26px; }
-  .rail-card .row .stack { margin-left: auto; flex-shrink: 0; }
-  .rail-card .pin { margin-top: 0; min-width: 0; }
-  .rail-card .title {
-    font-size: 13px; font-weight: 600; line-height: 1.3;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  }
-  .rail-card .pin {
-    display: inline-flex; align-items: center; gap: 4px; margin-top: 8px;
-    font-size: 10.5px; font-weight: 600; color: var(--ink);
-    background: rgba(255,255,255,0.94); border-radius: 999px; padding: 5px 9px 5px 7px;
-    max-width: 100%;
-  }
-  .rail-card .pin span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .rail-card .pin svg { color: var(--pink); flex-shrink: 0; }
-  .rail-card .fb-emoji { position: absolute; inset: 0; display: grid; place-items: center; font-size: 52px; }
-  @keyframes slide { to { opacity: 1; transform: none; } }
+  .tile .ph .time.hot { background: var(--pink); color: #fff; }
+  .under { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; padding: 0 2px; }
+  .under .where { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; min-width: 0; }
+  .under .where span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .under .where svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--ink); }
+  .tile .name { font-size: 13px; font-weight: 600; margin: 6px 2px 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-  /* ===== feed cards: host line ABOVE, white box below ===== */
-  .card {
-    margin-bottom: 22px;
-    opacity: 0; transform: translateY(18px) scale(0.985);
-    animation: rise 0.55s var(--ease-out) forwards;
-    transition: transform 0.25s var(--ease-out);
+  .stack { display: flex; align-items: center; flex-shrink: 0; }
+  .stack img, .stack .more {
+    width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
+    border: 2px solid #fff; margin-left: -9px; background: var(--chip);
   }
-  .card.pressed { transform: scale(0.985); }
+  .stack img:first-child, .stack .more:first-child { margin-left: 0; }
+  .stack .more { display: grid; place-items: center; font-size: 9.5px; font-weight: 700; background: var(--ink); color: #fff; }
+
+  /* horizontal "TagAlong" cards */
+  .list { display: grid; gap: 14px; margin-top: 14px; }
+  .hc {
+    display: flex; gap: 12px; background: #fff; border-radius: var(--r-lg); padding: 12px;
+    box-shadow: var(--shadow-card); position: relative;
+    opacity: 0; transform: translateY(12px); animation: rise 0.5s var(--ease-out) forwards;
+    transition: transform 0.15s ease;
+  }
+  .hc.pressed { transform: scale(0.985); }
   @keyframes rise { to { opacity: 1; transform: none; } }
-
-  .card-head {
-    display: flex; align-items: center; gap: 10px; padding: 0 4px 10px; min-width: 0;
+  .hc .ph {
+    flex: 0 0 122px; height: 122px; border-radius: var(--r-md); overflow: hidden; position: relative; background: var(--chip);
   }
-  .card-head .av {
-    width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
-    border: 2px solid #fff; background: var(--soft); box-shadow: 0 2px 6px rgba(60,45,110,0.1);
-    display: grid; place-items: center; font-size: 16px;
+  .hc .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hc .ph .fb { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; }
+  .hc .ph .pin {
+    position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px);
+    background: rgba(255,255,255,0.94); color: var(--ink); font-size: 10px; font-weight: 600;
+    padding: 4px 8px; border-radius: 999px; display: flex; align-items: center; gap: 4px;
+    white-space: nowrap; overflow: hidden;
   }
-  .card-head .who { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 1px; }
-  .card-head .name { font-size: 13.5px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-head .when { font-size: 12px; color: var(--muted); font-weight: 500; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-head .when b { color: var(--ink); font-weight: 600; }
-  .card-head .when b.today { color: #9A6B00; }
-  .card-head .when b.tomorrow { color: #0E7A5F; }
-
-  .box {
-    background: var(--card);
-    border-radius: var(--radius-card);
-    padding: 10px 10px 12px;
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.25s ease, transform 0.25s var(--ease-out);
-  }
-  .card:hover .box { box-shadow: var(--shadow-lift); }
-
-  .photo {
-    position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-photo); overflow: hidden;
-    background: linear-gradient(135deg, var(--lavender), #fff);
-    display: block; text-decoration: none; cursor: pointer;
-  }
-  .photo.short { aspect-ratio: 16 / 8; }
-  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s var(--ease-out); }
-  .card:hover .photo img { transform: scale(1.04); }
-  .photo .fb-emoji { position: absolute; inset: 0; display: grid; place-items: center; font-size: 56px; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12)); }
-  .photo .fb-emoji::after {
-    content: ""; position: absolute; width: 140px; height: 140px; border-radius: 50%;
-    background: rgba(255,255,255,0.35); z-index: -1;
-  }
-  .photo .tag {
-    position: absolute; font-size: 11px; font-weight: 600; padding: 6px 11px; border-radius: 999px;
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    display: inline-flex; align-items: center; gap: 4px; line-height: 1.2;
-  }
-  .photo .tag.tl { top: 12px; left: 12px; }
-  .photo .tag.tr { top: 12px; right: 12px; }
-  .tag.near { background: var(--pink); color: #fff; box-shadow: 0 4px 12px rgba(255,45,120,0.3); }
-  .tag.open { background: rgba(255,255,255,0.94); color: #0E7A5F; }
-  .tag.sold { background: rgba(23,19,31,0.8); color: #fff; }
-  .tag.free { background: var(--mint); color: #073D30; }
-  .tag.price { background: rgba(255,255,255,0.94); color: var(--ink); }
-  .tag.cat { background: rgba(255,255,255,0.94); color: var(--purple); }
-
-  .card-body { padding: 14px 6px 2px; }
-  .title {
-    font-weight: 600; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; margin: 0;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .title a { text-decoration: none; }
-  .title a:hover { color: var(--purple); }
-  .loc { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--muted); font-weight: 500; margin-top: 6px; }
-  .loc svg { flex-shrink: 0; color: var(--pink); }
-  .excerpt { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 6px 0 0; font-weight: 500;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .pillrow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .pill {
-    font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px;
-    background: var(--soft); color: var(--ink);
-  }
-  .pill.mint { background: color-mix(in srgb, var(--mint) 22%, #fff); color: #0E7A5F; }
-  .pill.yellow { background: color-mix(in srgb, var(--yellow) 40%, #fff); color: #6A4B00; }
-
-  .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; margin-top: 14px; flex-wrap: wrap; }
-  .card-foot .actions { margin-left: auto; }
-  .going { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); font-weight: 500; min-width: 0; }
-  .going b { color: var(--ink); font-weight: 600; }
-  .going .spots { color: var(--pink); font-weight: 600; }
-  .actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .btn {
-    border-radius: 999px; padding: 11px 18px; font-size: 13px; font-weight: 600;
-    border: 1.5px solid #DAD4EA; background: #fff; color: var(--ink);
-    cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
-    transition: transform 0.2s var(--ease-pop), background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    white-space: nowrap; line-height: 1;
-  }
-  .btn:hover { border-color: var(--ink); }
-  .btn:active { transform: scale(0.93); }
-  .btn.primary { background: var(--purple-deep); color: #fff; border-color: var(--purple-deep); }
-  .btn.primary:hover { background: #4E33D6; border-color: #4E33D6; }
-  .btn.primary.hot { background: var(--pink); border-color: var(--pink); }
-  .btn.primary.hot:hover { background: #F01D68; border-color: #F01D68; }
-  .btn.primary.dark { background: var(--ink); border-color: var(--ink); }
+  .hc .ph .pin svg { width: 11px; height: 11px; flex-shrink: 0; }
+  .hc .ph .pin span { overflow: hidden; text-overflow: ellipsis; }
+  .hc .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 2px 4px 2px 0; }
+  .hc .title { font-size: 15px; font-weight: 600; line-height: 1.25; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .hc .desc { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .hc .foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .pill { font-size: 11px; font-weight: 600; padding: 5px 9px; border-radius: 8px; white-space: nowrap; }
+  .pill.blue { background: var(--blue-soft); color: var(--blue); }
+  .pill.green { background: var(--green-soft); color: var(--green); }
+  .pill.pink { background: var(--pink-soft); color: var(--pink); }
+  .pill.gray { background: var(--chip); color: var(--muted); }
+  .hc .stack img, .hc .stack .more { width: 22px; height: 22px; margin-left: -8px; }
+  .hc .stack img:first-child, .hc .stack .more:first-child { margin-left: 0; }
+  .hc .go { position: absolute; inset: 0; border-radius: var(--r-lg); }
+  .hc .body, .hc .ph { position: relative; z-index: 1; pointer-events: none; }
 
   .more-btn {
-    display: block; width: 100%; margin: 4px 0 22px; padding: 13px; border-radius: 999px;
-    border: 1.5px solid #DAD4EA; background: #fff; color: var(--ink);
-    font-weight: 600; font-size: 13px; cursor: pointer;
-    transition: border-color 0.2s ease, transform 0.2s var(--ease-pop);
+    margin-top: 14px; width: 100%; border: 1px solid var(--line); background: #fff; color: var(--ink);
+    font-size: 13px; font-weight: 600; padding: 12px; border-radius: 14px;
   }
-  .more-btn:hover { border-color: var(--ink); }
   .more-btn:active { transform: scale(0.98); }
-
-  /* ===== perks ===== */
-  .perk {
-    display: flex; gap: 14px; align-items: flex-start;
-    background: var(--card); border-radius: var(--radius-card);
-    padding: 12px 14px 14px 12px; margin-bottom: 12px;
-    box-shadow: var(--shadow-card);
-    opacity: 0; transform: translateY(18px); animation: rise 0.55s var(--ease-out) forwards;
-    transition: box-shadow 0.25s ease;
+  .state { padding: 22px 16px; text-align: center; background: #FAFAFC; border-radius: var(--r-lg); margin-top: 14px; }
+  .rail .state { flex: 1; margin-top: 0; }
+  .state .big { font-size: 30px; display: block; margin-bottom: 6px; }
+  .state h3 { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+  .state p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.5; }
+  .state code { font-family: ui-monospace, monospace; font-size: 11px; background: var(--chip); padding: 1px 5px; border-radius: 5px; }
+  .state .btn { margin-top: 12px; }
+  .btn {
+    border: none; background: var(--ink); color: #fff; font-size: 13px; font-weight: 600;
+    padding: 11px 16px; border-radius: 999px; transition: transform 0.18s var(--ease-pop);
+    display: inline-flex; align-items: center; gap: 8px;
   }
-  .perk:hover { box-shadow: var(--shadow-lift); }
-  .perk .tile {
-    width: 84px; height: 84px; border-radius: 18px; flex-shrink: 0;
-    display: grid; place-items: center; font-size: 34px; position: relative;
-  }
-  .perk .tile .pill { position: absolute; left: 6px; bottom: 6px; padding: 3px 8px; font-size: 10px; background: var(--mint); color: #073D30; }
-  .perk .pb { flex: 1; min-width: 0; }
-  .perk .pname { font-weight: 600; font-size: 15.5px; line-height: 1.3; letter-spacing: -0.01em; }
-  .perk .offer { font-size: 13px; color: var(--ink); margin-top: 3px; line-height: 1.45; font-weight: 500; }
-  .perk .note { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.45; font-weight: 500; }
-  .perk .actions { margin-top: 10px; }
-
-  /* ===== states ===== */
-  .state {
-    border-radius: var(--radius-card); padding: 28px 20px; text-align: center;
-    background: var(--card); box-shadow: var(--shadow-card); margin-bottom: 14px;
-    animation: rise 0.5s var(--ease-out) forwards; opacity: 0; transform: translateY(12px);
-  }
-  .state .big { font-size: 40px; line-height: 1; margin-bottom: 10px; display: inline-block; }
-  .state h3 { margin: 0 0 6px; font-size: 15.5px; font-weight: 600; }
-  .state p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.55; font-weight: 500; }
-  .state code { background: var(--soft); padding: 2px 7px; border-radius: 8px; font-size: 11.5px; color: var(--purple); font-family: ui-monospace, Menlo, monospace; }
-  .state .btn { margin-top: 14px; }
-
-  .skel { margin-bottom: 22px; }
-  .skel .head { height: 34px; width: 55%; margin: 0 0 10px 4px; border-radius: 999px; }
-  .skel .box { padding: 10px; }
-  .skel .head, .skel .bar, .skel .img {
-    background: linear-gradient(90deg, #EFEBF7 25%, #F8F6FC 50%, #EFEBF7 75%);
-    background-size: 200% 100%; animation: shimmer 1.3s linear infinite; border-radius: 10px;
-  }
-  .skel .img { aspect-ratio: 4 / 3; border-radius: var(--radius-photo); }
-  .skel .bar { height: 14px; margin: 14px 6px 0; }
-  .skel .bar.w60 { width: 60%; }
-  .skel .bar.w35 { width: 35%; height: 11px; }
+  .btn:active { transform: scale(0.95); }
+  .skel { display: flex; gap: 12px; padding: 12px; border-radius: var(--r-lg); box-shadow: var(--shadow-card); }
+  .skel .b { background: linear-gradient(90deg, #F2F2F6 25%, #FAFAFC 50%, #F2F2F6 75%); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; border-radius: 12px; }
+  .skel .b.ph { flex: 0 0 122px; height: 122px; border-radius: var(--r-md); }
+  .skel .col { flex: 1; display: grid; gap: 10px; align-content: start; padding-top: 6px; }
+  .skel .b.l1 { height: 16px; width: 80%; } .skel .b.l2 { height: 12px; width: 60%; } .skel .b.l3 { height: 22px; width: 38%; }
   @keyframes shimmer { to { background-position: -200% 0; } }
 
-  footer { margin: 26px auto 0; padding: 0 22px; font-size: 11.5px; color: var(--muted); text-align: center; line-height: 1.6; font-weight: 500; }
-  footer a { color: var(--purple); text-decoration: none; font-weight: 600; }
+  /* sold-out drawer, faded like "Saved Destinations" */
+  details.faded summary { list-style: none; cursor: pointer; }
+  details.faded summary::-webkit-details-marker { display: none; }
+  details.faded[open] .sh.faint h2 { color: var(--ink); }
+  details.faded[open] .sh.faint .chev { background: var(--chip); color: var(--ink); transform: rotate(90deg); }
 
-  /* ===== floating bottom nav + centre sweep button ===== */
+  footer { margin-top: 30px; font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+  footer a { text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ---------- floating pill nav with detached + ---------- */
+  .navwrap {
+    position: fixed; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 40;
+    display: flex; justify-content: center; gap: 12px; padding: 0 20px; pointer-events: none;
+  }
   .nav {
-    position: fixed; left: 50%; transform: translateX(-50%);
-    bottom: max(14px, env(safe-area-inset-bottom));
-    width: min(calc(100% - 28px), 440px); height: 68px; z-index: 40;
-    background: rgba(255,255,255,0.94); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border-radius: 34px; box-shadow: 0 10px 30px rgba(40,30,80,0.16), 0 1px 0 rgba(255,255,255,0.8) inset;
-    display: grid; grid-template-columns: 1fr 1fr 76px 1fr 1fr; align-items: center;
+    pointer-events: auto; display: flex; align-items: center; gap: 6px;
+    background: #fff; border-radius: 999px; padding: 8px; box-shadow: var(--shadow-nav);
   }
-  .nav-item {
-    border: none; background: none; cursor: pointer; color: #A39DB3; height: 100%;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-    font-size: 10.5px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap;
-    transition: color 0.2s ease, transform 0.2s var(--ease-pop);
+  .nav button {
+    width: 46px; height: 46px; border-radius: 50%; border: none; background: transparent;
+    display: grid; place-items: center; color: var(--muted); position: relative;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.18s var(--ease-pop);
   }
-  @media (max-width: 360px) {
-    .nav { grid-template-columns: 1fr 1fr 64px 1fr 1fr; }
-    .nav-item { font-size: 9px; }
-    .nav-item .n { margin-left: 22px; }
+  .nav button svg { width: 20px; height: 20px; }
+  .nav button.on { background: var(--ink); color: #fff; }
+  .nav button:active { transform: scale(0.9); }
+  .nav button .badge {
+    position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px;
+    border-radius: 999px; background: var(--blue); color: #fff; font-size: 9.5px; font-weight: 700;
+    display: grid; place-items: center; border: 2px solid #fff;
   }
-  .nav-item svg { transition: transform 0.25s var(--ease-pop); }
-  .nav-item:active svg { transform: scale(0.86); }
-  .nav-item.active { color: var(--ink); }
-  .nav-item.active svg { transform: translateY(-1px); }
-  .nav-item .n {
-    position: absolute; margin: -22px 0 0 26px; font-size: 9px; font-weight: 700;
-    background: var(--pink); color: #fff; border-radius: 999px; padding: 2px 5px; min-width: 16px; text-align: center;
-    border: 2px solid #fff; display: none;
+  .plus {
+    pointer-events: auto; width: 62px; height: 62px; border-radius: 50%; border: none;
+    background: #fff; color: var(--ink); display: grid; place-items: center; box-shadow: var(--shadow-nav);
+    transition: transform 0.2s var(--ease-pop), background 0.2s ease, color 0.2s ease;
   }
-  .nav-item .n.show { display: inline-block; }
-  .sweep {
-    grid-column: 3; justify-self: center; align-self: start; margin-top: -24px; position: relative;
-    width: 62px; height: 62px; border-radius: 50%; border: 4px solid var(--bg);
-    background: var(--ink); color: #fff; cursor: pointer;
-    display: grid; place-items: center;
-    box-shadow: 0 12px 26px rgba(23,19,31,0.35);
-    transition: transform 0.25s var(--ease-pop), box-shadow 0.25s ease;
-  }
-  .sweep:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(23,19,31,0.4); }
-  .sweep:active { transform: scale(0.9); }
-  .sweep.busy { pointer-events: none; }
-  .sweep.busy svg { animation: spin 0.9s linear infinite; }
-  .sweep.done { animation: ping 0.6s var(--ease-pop); }
-  .sweep-label {
-    position: absolute; left: 50%; top: 100%; transform: translate(-50%, 5px);
-    font-size: 10.5px; font-weight: 600; color: #A39DB3; white-space: nowrap;
-  }
-  .sweep.busy .sweep-label { color: var(--purple); }
+  .plus svg { width: 22px; height: 22px; }
+  .plus:active { transform: scale(0.9); }
+  .plus.busy { background: var(--ink); color: #fff; }
+  .plus.busy svg { animation: spin 0.9s linear infinite; }
+  .plus.done { background: var(--blue); color: #fff; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(123,92,255,0.6), 0 12px 26px rgba(23,19,31,0.35); } 100% { box-shadow: 0 0 0 22px rgba(123,92,255,0), 0 12px 26px rgba(23,19,31,0.35); } }
 
   .toast {
-    position: fixed; left: 50%; bottom: 100px; transform: translate(-50%, 14px) scale(0.96);
+    position: fixed; left: 50%; bottom: 100px; transform: translate(-50%, 10px);
     background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 500;
-    padding: 12px 18px; border-radius: 999px; opacity: 0; pointer-events: none; z-index: 41;
-    transition: opacity 0.25s ease, transform 0.3s var(--ease-pop);
-    max-width: min(86vw, 420px); text-align: center; line-height: 1.4;
-    box-shadow: 0 12px 30px rgba(23,19,31,0.3);
+    padding: 10px 16px; border-radius: 999px; opacity: 0; pointer-events: none; z-index: 50;
+    transition: opacity 0.25s ease, transform 0.25s ease; max-width: 82vw; text-align: center;
   }
-  .toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  @media (max-width: 380px) {
-    .greet { font-size: 23px; }
-    .rail-card { flex-basis: 160px; height: 216px; }
-  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .card, .perk, .rail-card, .state, .host-strip { opacity: 1 !important; transform: none !important; }
+    .hc { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <div class="me" aria-hidden="true">🌉</div>
+      <h1 class="hello">Hello there</h1>
+      <button class="iconbtn" id="soundToggle" aria-label="Toggle sound effects" aria-pressed="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      </button>
+      <button class="iconbtn" id="shareTop" aria-label="Share this page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
+      </button>
+    </div>
+    <p class="lede">Live SF events with real spots remaining, free picks around the city, and hand-checked perks. No account needed.</p>
+    <div class="status"><span class="dot" id="dot"></span><span id="updated">Checking…</span></div>
+  </header>
 
-<div class="hero">
-  <div class="wrap hero-inner">
-    <div class="greet-row">
-      <h1 class="greet">Hey, what's on in SF <span class="wave">👋</span></h1>
-      <div class="greet-actions">
-        <button class="icon-btn" id="soundToggle" aria-pressed="true" aria-label="Toggle sound effects" title="Sound effects">
-          <svg class="ico-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-          <svg class="ico-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>
-        </button>
-        <div class="avatar-blob" aria-hidden="true">🌉</div>
+  <section id="soon">
+    <div class="sh">
+      <h2>Happening soon</h2>
+      <button class="chev" type="button" data-jump="open" aria-label="See all open events">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+    <div class="rail" id="railSoon"></div>
+  </section>
+
+  <section id="near">
+    <div class="sh">
+      <div><h2>#AlmostFull</h2><p class="sub">Grab a spot before it's gone</p></div>
+      <span class="pill blue" id="nearCount">–</span>
+    </div>
+    <div class="list" id="listNear"></div>
+  </section>
+
+  <section id="open">
+    <div class="sh">
+      <div><h2>Open now</h2><p class="sub">Luma events with room, next 30 days</p></div>
+      <span class="pill gray" id="openCount">–</span>
+    </div>
+    <div class="list" id="listOpen"></div>
+  </section>
+
+  <section id="funcheap">
+    <div class="sh">
+      <div><h2>Free &amp; fun</h2><p class="sub">Funcheap's latest picks</p></div>
+      <span class="pill gray" id="funCount">–</span>
+    </div>
+    <div class="list" id="listFun"></div>
+  </section>
+
+  <section id="instagram">
+    <div class="sh">
+      <div><h2>Spotted on Instagram</h2><p class="sub" id="igSub">Events pulled from SF accounts, loads only when you ask</p></div>
+      <span class="pill gray" id="igCount">–</span>
+    </div>
+    <div class="list" id="listIg">
+      <div class="state">
+        <span class="big">📸</span>
+        <h3>Not loaded yet</h3>
+        <p>This one reads a handful of SF accounts and costs a little to run, so it only fetches when someone asks.</p>
+        <button class="btn" type="button" id="igLoad">Show Instagram finds</button>
       </div>
     </div>
-    <p class="sub">Live Luma spots, Funcheap's free picks, Instagram finds and hand-checked perks. No account needed.</p>
-    <div class="host-strip" id="hostStrip" aria-live="polite"></div>
-  </div>
-</div>
+  </section>
 
-<div class="chipbar" id="chipbar">
-  <div class="wrap">
-    <div class="chiprow" id="chips" role="tablist" aria-label="Event filters">
-      <button class="chip active" role="tab" aria-selected="true" data-tab="near">Near capacity <span class="n" id="count-near">–</span></button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="open">Open now <span class="n" id="count-open">–</span></button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="sold">Sold out <span class="n" id="count-sold">–</span></button>
-      <button class="chip" role="tab" aria-selected="false" data-tab="tm">Concerts &amp; shows <span class="n" id="count-tm">–</span></button>
+  <section id="tm">
+    <div class="sh">
+      <div><h2>Concerts &amp; shows</h2><p class="sub">Ticketed, via Ticketmaster</p></div>
+      <span class="pill gray" id="tmCount">–</span>
     </div>
-  </div>
+    <div class="list" id="listTm"></div>
+  </section>
+
+  <section id="perks">
+    <div class="sh">
+      <div><h2>Free perks</h2><p class="sub" id="perksSub">Hand-checked free admission</p></div>
+      <span class="pill green" id="perksCount">–</span>
+    </div>
+    <div class="list" id="listPerks"></div>
+  </section>
+
+  <section id="sold">
+    <details class="faded">
+      <summary>
+        <div class="sh faint">
+          <h2>Sold out already</h2>
+          <span class="chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </summary>
+      <div class="list" id="listSold"></div>
+    </details>
+  </section>
+
+  <footer id="footer"></footer>
 </div>
 
-<main class="wrap">
-  <div class="meta-row">
-    <span><span class="dot" id="dot"></span><span id="updated">Sweeping Luma…</span></span>
-    <span id="totals"></span>
-  </div>
-  <section class="panel" id="near" role="tabpanel"></section>
-  <section class="panel" id="open" role="tabpanel" hidden></section>
-  <section class="panel" id="sold" role="tabpanel" hidden></section>
-  <section class="panel" id="funcheap" role="tabpanel" hidden></section>
-  <section class="panel" id="tm" role="tabpanel" hidden></section>
-  <section class="panel" id="ig" role="tabpanel" hidden></section>
-  <section class="panel" id="perks" role="tabpanel" hidden></section>
-</main>
-
-<footer id="footer"></footer>
-
-<nav class="nav" id="nav" aria-label="Sections">
-  <button class="nav-item active" data-lane="events" type="button">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="4"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-    Events
+<div class="navwrap">
+  <nav class="nav" aria-label="Sections">
+    <button type="button" class="on" data-nav="top" aria-label="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+    </button>
+    <button type="button" data-nav="open" aria-label="Discover events">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15 9-2 6-4 2 2-6z"/></svg>
+      <span class="badge" id="navOpenBadge" hidden></span>
+    </button>
+    <button type="button" data-nav="perks" aria-label="Free perks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v12H4z"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12"/></svg>
+    </button>
+  </nav>
+  <button class="plus" id="sweep" type="button" aria-label="Run the sweep now">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
   </button>
-  <button class="nav-item" data-lane="funcheap" type="button">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a6.5 6.5 0 0 1 6.5 7c0 4-3.5 7.5-6.5 7.5S5.5 13 5.5 9A6.5 6.5 0 0 1 12 2z"/><path d="M12 16.5v2M11 22l1-3.5 1 3.5"/></svg>
-    Free &amp; fun <span class="n" id="count-funcheap"></span>
-  </button>
-  <button class="sweep" id="refresh" type="button" aria-label="Run the sweep now">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-    <span class="sweep-label" id="fabLabel">Sweep</span>
-  </button>
-  <button class="nav-item" data-lane="ig" type="button">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>
-    Instagram <span class="n" id="count-ig"></span>
-  </button>
-  <button class="nav-item" data-lane="perks" type="button">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v12M2 7h20v3H2zM12 7c-2-3-5-3-5-1s3 1 5 1zm0 0c2-3 5-3 5-1s-3 1-5 1z"/></svg>
-    Perks <span class="n" id="count-perks"></span>
-  </button>
-</nav>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
-  // ============================================================
-  // helpers
-  // ============================================================
   const $ = (id) => document.getElementById(id);
+  const PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
   const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const hashStr = (s) => [...String(s ?? "")].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
-
-  const GRADS = [
-    "linear-gradient(135deg, #FF2D78, #FF9A5C)",
-    "linear-gradient(135deg, #7B5CFF, #FF2D78)",
-    "linear-gradient(135deg, #2BD4A8, #7B5CFF)",
-    "linear-gradient(135deg, #FFC93C, #FF2D78)",
-    "linear-gradient(135deg, #5CC8FF, #7B5CFF)",
-    "linear-gradient(135deg, #2BD4A8, #FFC93C)",
-  ];
-  const gradFor = (seed) => GRADS[hashStr(seed) % GRADS.length];
-  const CAT_EMOJI = ["🎤", "🤝", "🎨", "🍽️", "🛠️", "🎉", "☕", "🧑‍💻", "🚀", "🧠"];
-  const emojiFor = (seed) => CAT_EMOJI[hashStr(seed) % CAT_EMOJI.length];
-  const FUN_EMOJI = ["🎈", "🎬", "🎶", "🖼️", "🌮", "🎪", "🌳", "🎭"];
-
-  const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-  function dayInfo(iso) {
-    if (!iso) return { label: "Date TBA", cls: "" };
-    const d = new Date(iso);
-    if (isNaN(d)) return { label: "Date TBA", cls: "" };
-    const now = new Date();
-    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
-    if (sameDay(d, now)) return { label: "Today", cls: "today" };
-    if (sameDay(d, tomorrow)) return { label: "Tomorrow", cls: "tomorrow" };
-    return { label: d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }), cls: "" };
-  }
-  const clock = (iso) => {
-    const d = new Date(iso);
-    return isNaN(d) ? "" : d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-  };
-  const spots = (n) => `${n} spot${n === 1 ? "" : "s"}`;
+  const hashStr = (s) => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
   const timeAgo = (ms) => {
     const min = Math.round((Date.now() - ms) / 60000);
     if (min < 1) return "just now";
     if (min < 60) return `${min} min ago`;
-    return `${Math.round(min / 60)} hr ago`;
+    const hr = Math.round(min / 60);
+    return hr < 24 ? `${hr} hr ago` : `${Math.round(hr / 24)} d ago`;
   };
-  const PIN = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
-  const SHARE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>';
-  const ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>';
+  const clock = (iso) => new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  function dayLabel(iso) {
+    const d = new Date(iso), now = new Date();
+    const a = new Date(d.getFullYear(), d.getMonth(), d.getDate()), b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diff = Math.round((a - b) / 86400000);
+    if (diff === 0) return "Today";
+    if (diff === 1) return "Tomorrow";
+    return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  }
+  const FALLBACK = ["🎤", "🤝", "🧑‍💻", "🎨", "☕", "🌉", "🎉", "🍽️"];
+  const emojiFor = (seed) => FALLBACK[hashStr(seed) % FALLBACK.length];
 
-  // ============================================================
-  // sound: tiny synthesized UI sounds via Web Audio, no files
-  // ============================================================
+  // ---------- sounds (Web Audio, no files) ----------
   const Sound = {
-    enabled: (() => { try { return localStorage.getItem("sfx") !== "off"; } catch { return true; } })(),
-    ctx: null,
-    ensure() {
-      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-      if (this.ctx.state === "suspended") this.ctx.resume();
-      return this.ctx;
-    },
-    tone({ freq, to = null, dur = 0.08, type = "sine", gain = 0.05, delay = 0 }) {
+    ctx: null, enabled: (() => { try { return localStorage.getItem("sfx") !== "off"; } catch { return true; } })(),
+    tone({ freq, to, dur = 0.08, type = "sine", gain = 0.04, delay = 0 }) {
       if (!this.enabled) return;
       try {
-        const ctx = this.ensure();
-        const t0 = ctx.currentTime + delay;
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, t0);
-        if (to) osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
-        g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(gain, t0 + 0.012);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-        osc.connect(g).connect(ctx.destination);
-        osc.start(t0); osc.stop(t0 + dur + 0.03);
+        this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+        const t0 = this.ctx.currentTime + delay, o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, t0);
+        if (to) o.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(gain, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        o.connect(g).connect(this.ctx.destination); o.start(t0); o.stop(t0 + dur + 0.02);
       } catch {}
     },
-    noise({ dur = 0.35, from = 500, to = 2600, gain = 0.06 }) {
-      if (!this.enabled) return;
-      try {
-        const ctx = this.ensure();
-        const t0 = ctx.currentTime;
-        const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-        const src = ctx.createBufferSource(); src.buffer = buf;
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass"; filter.Q.value = 1.2;
-        filter.frequency.setValueAtTime(from, t0);
-        filter.frequency.exponentialRampToValueAtTime(to, t0 + dur);
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(gain, t0 + dur * 0.35);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-        src.connect(filter).connect(g).connect(ctx.destination);
-        src.start(t0); src.stop(t0 + dur + 0.02);
-      } catch {}
-    },
-    tap() { this.tone({ freq: 900, to: 620, dur: 0.06, gain: 0.035 }); },
-    whoosh() { this.noise({}); this.tone({ freq: 300, to: 720, dur: 0.3, gain: 0.02 }); },
-    success() {
-      this.tone({ freq: 659, dur: 0.12, type: "triangle", gain: 0.05 });
-      this.tone({ freq: 880, dur: 0.14, type: "triangle", gain: 0.05, delay: 0.09 });
-      this.tone({ freq: 1175, dur: 0.22, type: "triangle", gain: 0.045, delay: 0.18 });
-    },
-    error() { this.tone({ freq: 240, to: 180, dur: 0.22, type: "square", gain: 0.025 }); },
+    tap() { this.tone({ freq: 880, to: 600, dur: 0.06, gain: 0.03 }); },
+    whoosh() { this.tone({ freq: 280, to: 760, dur: 0.28, gain: 0.02 }); },
+    success() { this.tone({ freq: 659, dur: 0.11, type: "triangle" }); this.tone({ freq: 880, dur: 0.13, type: "triangle", delay: 0.09 }); this.tone({ freq: 1175, dur: 0.2, type: "triangle", delay: 0.18 }); },
+    error() { this.tone({ freq: 240, to: 170, dur: 0.22, type: "square", gain: 0.02 }); },
     toggle() {
       this.enabled = !this.enabled;
       try { localStorage.setItem("sfx", this.enabled ? "on" : "off"); } catch {}
@@ -643,465 +400,255 @@
   $("soundToggle").setAttribute("aria-pressed", String(Sound.enabled));
   $("soundToggle").addEventListener("click", () => Sound.toggle());
 
-  // ============================================================
-  // toast
-  // ============================================================
   let toastTimer;
   function toast(msg, ms = 2800) {
-    const el = $("toast");
-    el.textContent = msg;
-    el.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove("show"), ms);
+    const el = $("toast"); el.textContent = msg; el.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), ms);
   }
-
-  // ============================================================
-  // share (real action: native share sheet or copy link)
-  // ============================================================
   async function share(title, url) {
     Sound.tap();
-    try {
-      if (navigator.share) { await navigator.share({ title, url }); return; }
-    } catch (e) { if (e && e.name === "AbortError") return; }
-    try { await navigator.clipboard.writeText(url); toast("Link copied 🔗"); }
-    catch { toast("Could not copy the link."); }
+    try { if (navigator.share) { await navigator.share({ title, url }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+    try { await navigator.clipboard.writeText(url); toast("Link copied"); } catch { toast("Could not copy the link."); }
   }
+  $("shareTop").addEventListener("click", () => share(document.title, location.href.split("#")[0]));
 
-  // ============================================================
-  // building blocks
-  // ============================================================
-  function stackHtml(urls, { cls = "", max = 3, extra = 0 } = {}) {
-    const list = (urls ?? []).filter(Boolean).slice(0, max);
-    if (!list.length && !extra) return "";
-    const imgs = list.map((src) => `<img src="${escapeHtml(src)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`).join("");
-    const more = extra > 0 ? `<span class="more">+${extra > 99 ? "99" : extra}</span>` : "";
-    return `<span class="stack ${cls}">${imgs}${more}</span>`;
+  // ---------- building blocks ----------
+  function fillPhoto(box, src, seed, emoji) {
+    const fb = () => { box.querySelector("img")?.remove(); box.insertAdjacentHTML("afterbegin", `<span class="fb">${emoji || emojiFor(seed)}</span>`); };
+    if (!src) { fb(); return; }
+    const img = new Image();
+    img.alt = ""; img.loading = "lazy"; img.decoding = "async"; img.referrerPolicy = "no-referrer";
+    img.addEventListener("error", fb);
+    img.src = src; box.prepend(img);
   }
-
-  // photo block with graceful fallback (never a broken image)
-  function photoEl({ src, seed, emoji, href, short = false, tags = "" }) {
-    const box = document.createElement(href ? "a" : "div");
-    box.className = "photo" + (short ? " short" : "");
-    if (href) { box.href = href; box.target = "_blank"; box.rel = "noreferrer"; box.setAttribute("aria-label", "Open event"); }
-    const fallback = () => {
-      box.style.background = gradFor(seed);
-      const fb = document.createElement("span");
-      fb.className = "fb-emoji"; fb.textContent = emoji;
-      box.prepend(fb);
-    };
-    if (src) {
-      const img = new Image();
-      img.loading = "lazy"; img.decoding = "async"; img.alt = ""; img.referrerPolicy = "no-referrer";
-      img.addEventListener("error", () => { img.remove(); fallback(); });
-      img.src = src;
-      box.appendChild(img);
-    } else {
-      fallback();
-    }
-    if (tags) box.insertAdjacentHTML("beforeend", tags);
-    return box;
+  function stackHtml(urls, { max = 3 } = {}) {
+    const list = (urls ?? []).filter(Boolean);
+    if (!list.length) return "";
+    const imgs = list.slice(0, max).map((s) => `<img src="${escapeHtml(s)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`).join("");
+    const extra = list.length - max;
+    return `<span class="stack">${imgs}${extra > 0 ? `<span class="more">+${extra}</span>` : ""}</span>`;
   }
-
-  function attachPress(card) {
+  function press(card) {
     card.addEventListener("pointerdown", () => card.classList.add("pressed"));
-    const off = () => card.classList.remove("pressed");
-    card.addEventListener("pointerup", off);
-    card.addEventListener("pointerleave", off);
-    card.addEventListener("pointercancel", off);
+    ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => card.addEventListener(ev, () => card.classList.remove("pressed")));
   }
 
-  // the line that sits ABOVE each white box: a round avatar, who it's from, when
-  function headHtml({ avatar, emoji, name, when }) {
-    const av = avatar
-      ? `<img class="av" src="${escapeHtml(avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'av',textContent:'${emoji}'}))" />`
-      : `<span class="av" style="background:${gradFor(name)}">${emoji}</span>`;
-    return `<div class="card-head">${av}<div class="who"><span class="name">${escapeHtml(name)}</span><span class="when">${when}</span></div></div>`;
+  // big square rail tile (reference: photo, then pin + avatars underneath)
+  function railTile(e, i) {
+    const t = document.createElement("article");
+    t.className = "tile";
+    const hot = !e.isSoldOut && e.isNearCapacity;
+    const where = [e.neighborhood, e.city].filter(Boolean).join(", ") || "San Francisco";
+    t.innerHTML = `
+      <a class="ph" href="${escapeHtml(e.url || "#")}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(e.name)}"></a>
+      <div class="under">
+        <span class="where">${PIN}<span>${escapeHtml(where)}</span></span>
+        ${stackHtml(e.hostAvatars, { max: 2 })}
+      </div>
+      <div class="name">${escapeHtml(e.name)}</div>`;
+    const ph = t.querySelector(".ph");
+    fillPhoto(ph, e.coverUrl, e.id);
+    const time = document.createElement("span");
+    time.className = "time" + (hot ? " hot" : "");
+    time.textContent = hot && e.spotsRemaining != null ? `${e.spotsRemaining} left` : `${dayLabel(e.startAt)} · ${clock(e.startAt)}`;
+    ph.appendChild(time);
+    ph.addEventListener("click", () => Sound.tap());
+    return t;
   }
-  const whenHtml = (day, time) => `<b class="${day.cls}">${escapeHtml(day.label)}</b>${time ? ` · ${escapeHtml(time)}` : ""}`;
 
-  function wireActions(card, { title, url, primaryLabel, primaryCls = "" }) {
-    const foot = card.querySelector(".actions");
-    if (!foot) return;
-    foot.innerHTML = `
-      <button class="btn share" type="button">Share</button>
-      ${url ? `<a class="btn primary ${primaryCls}" href="${escapeHtml(url)}" target="_blank" rel="noreferrer"><span class="txt">${escapeHtml(primaryLabel)}</span></a>` : ""}`;
-    foot.querySelector(".btn.share").addEventListener("click", (ev) => { ev.preventDefault(); share(title, url || location.href); });
-    const primary = foot.querySelector(".btn.primary");
-    if (primary) primary.addEventListener("click", () => Sound.tap());
-    card.querySelectorAll(".photo, .title a").forEach((el) => el.addEventListener("click", () => Sound.tap()));
-  }
-
-  // ============================================================
-  // Luma cards
-  // ============================================================
-  function lumaCard(e, i) {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
-    const day = dayInfo(e.startAt);
-    const status = e.isSoldOut
-      ? '<span class="tag tl sold">💤 Sold out</span>'
-      : e.isNearCapacity
-      ? `<span class="tag tl near">🔥 ${e.spotsRemaining != null ? spots(e.spotsRemaining) + " left" : "Near capacity"}</span>`
-      : '<span class="tag tl open">✨ Open</span>';
-    const priceTag = e.isFree ? '<span class="tag tr free">Free</span>' : e.price ? `<span class="tag tr price">${escapeHtml(e.price)}</span>` : "";
-    const where = [e.neighborhood, e.city || "San Francisco"].filter(Boolean).join(" · ");
-    const hostList = (e.hostAvatars ?? []).filter(Boolean);
-    const hosts = hostList.length;
-    const going = e.guestCount != null && e.guestCount > 0
-      ? `<b>${e.guestCount}</b> going`
-      : hosts ? `${hosts} host${hosts > 1 ? "s" : ""}` : "";
-    const left = !e.isSoldOut && !e.isNearCapacity && e.spotsRemaining != null ? ` · <span class="spots">${spots(e.spotsRemaining)} left</span>` : "";
-
-    card.innerHTML = `
-      ${headHtml({ avatar: hostList[0], emoji: emojiFor(e.id), name: hosts > 1 ? `Hosted by ${hosts} on Luma` : "Hosted on Luma", when: whenHtml(day, e.startAt ? clock(e.startAt) : "") })}
-      <div class="box">
-        <div class="photo-slot"></div>
-        <div class="card-body">
-          <h3 class="title"><a href="${escapeHtml(e.url || "#")}" target="_blank" rel="noreferrer">${escapeHtml(e.name)}</a></h3>
-          <div class="loc">${PIN}<span>${escapeHtml(where)}</span></div>
-          <div class="card-foot">
-            <div class="going">
-              ${stackHtml(hostList, { max: 3, extra: Math.max(0, hosts - 3) })}
-              <span>${going}${left}</span>
-            </div>
-            <div class="actions"></div>
-          </div>
+  // horizontal card (reference: "#TagAlong" row)
+  function hCard({ id, title, desc, photo, pinText, pill, pillCls = "blue", avatars, url, seed, emoji }, i) {
+    const c = document.createElement("article");
+    c.className = "hc";
+    c.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    c.innerHTML = `
+      <a class="go" href="${escapeHtml(url || "#")}" target="_blank" rel="noreferrer" aria-label="${escapeHtml(title)}"></a>
+      <div class="ph"></div>
+      <div class="body">
+        <h3 class="title">${escapeHtml(title)}</h3>
+        ${desc ? `<p class="desc">${escapeHtml(desc)}</p>` : ""}
+        <div class="foot">
+          ${pill ? `<span class="pill ${pillCls}">${escapeHtml(pill)}</span>` : "<span></span>"}
+          ${stackHtml(avatars, { max: 3 })}
         </div>
       </div>`;
-    card.querySelector(".photo-slot").replaceWith(photoEl({
-      src: e.coverUrl, seed: e.id, emoji: emojiFor(e.id), href: e.url, tags: status + priceTag,
-    }));
-    wireActions(card, {
-      title: e.name, url: e.url,
-      primaryLabel: e.isSoldOut ? "See event" : e.requireApproval ? "Request spot" : "Grab a spot",
-      primaryCls: e.isSoldOut ? "dark" : "",
-    });
-    attachPress(card);
-    return card;
+    const ph = c.querySelector(".ph");
+    fillPhoto(ph, photo, seed || id, emoji);
+    if (pinText) ph.insertAdjacentHTML("beforeend", `<span class="pin">${PIN}<span>${escapeHtml(pinText)}</span></span>`);
+    c.querySelector(".go").addEventListener("click", () => Sound.tap());
+    press(c);
+    return c;
   }
 
-  function railCard(e, i) {
-    const a = document.createElement("a");
-    a.className = "rail-card";
-    a.href = e.url || "#"; a.target = "_blank"; a.rel = "noreferrer";
-    a.style.animationDelay = `${Math.min(i, 8) * 0.06}s`;
-    a.addEventListener("click", () => Sound.tap());
-    const day = dayInfo(e.startAt);
-    const isToday = day.cls === "today";
-    a.innerHTML = `
-      <span class="shade"></span>
-      <span class="time ${isToday ? "now" : ""}">${escapeHtml(isToday ? "Today" : day.label)} · ${clock(e.startAt)}</span>
-      <span class="body">
-        <span class="title">${escapeHtml(e.name)}</span>
-        <span class="row">
-          ${e.neighborhood ? `<span class="pin">${PIN}<span>${escapeHtml(e.neighborhood)}</span></span>` : ""}
-          ${stackHtml(e.hostAvatars, { max: 3 })}
-        </span>
-      </span>`;
-    if (e.coverUrl) {
-      const img = new Image();
-      img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer";
-      img.addEventListener("error", () => { img.remove(); a.style.background = gradFor(e.id); a.insertAdjacentHTML("afterbegin", `<span class="fb-emoji">${emojiFor(e.id)}</span>`); });
-      img.src = e.coverUrl;
-      a.prepend(img);
-    } else {
-      a.style.background = gradFor(e.id);
-      a.insertAdjacentHTML("afterbegin", `<span class="fb-emoji">${emojiFor(e.id)}</span>`);
-    }
-    return a;
-  }
+  const lumaCard = (e, i) => hCard({
+    id: e.id,
+    title: e.name,
+    desc: `${dayLabel(e.startAt)} · ${clock(e.startAt)}${e.isFree ? " · Free" : e.price ? ` · ${e.price}` : ""}${e.requireApproval ? " · approval needed" : ""}`,
+    photo: e.coverUrl,
+    pinText: e.neighborhood || e.city || "SF",
+    pill: e.isSoldOut ? "Sold out" : e.isNearCapacity ? (e.spotsRemaining != null ? `${e.spotsRemaining} ${e.spotsRemaining === 1 ? "spot" : "spots"} left` : "Almost full") : (e.guestCount ? `${e.guestCount} going` : "Open"),
+    pillCls: e.isSoldOut ? "gray" : e.isNearCapacity ? "blue" : "green",
+    avatars: e.hostAvatars,
+    url: e.url,
+  }, i);
 
-  // ============================================================
-  // Funcheap + Ticketmaster + perks cards
-  // ============================================================
-  function funcheapCard(p, i) {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
-    const emoji = FUN_EMOJI[hashStr(p.id) % FUN_EMOJI.length];
-    const pills = [
-      p.date ? `<span class="pill yellow">📅 ${escapeHtml(p.date)}</span>` : "",
-      p.cost ? `<span class="pill mint">${escapeHtml(p.cost)}</span>` : "",
-    ].join("");
-    const posted = p.publishedAt ? `Posted ${escapeHtml(timeAgo(new Date(p.publishedAt).getTime()))}` : "sf.funcheap.com";
-    card.innerHTML = `
-      ${headHtml({ emoji, name: "Funcheap SF", when: posted })}
-      <div class="box">
-        <div class="photo-slot"></div>
-        <div class="card-body">
-          <h3 class="title"><a href="${escapeHtml(p.url)}" target="_blank" rel="noreferrer">${escapeHtml(p.name)}</a></h3>
-          ${p.excerpt ? `<p class="excerpt">${escapeHtml(p.excerpt.trim())}${/[.!?…]$/.test(p.excerpt.trim()) ? "" : "…"}</p>` : ""}
-          ${pills ? `<div class="pillrow">${pills}</div>` : ""}
-          <div class="card-foot">
-            <div class="going"><span>Free or cheap, per Funcheap</span></div>
-            <div class="actions"></div>
-          </div>
-        </div>
-      </div>`;
-    card.querySelector(".photo-slot").replaceWith(photoEl({ src: p.image, seed: p.id, emoji, href: p.url, short: !p.image }));
-    wireActions(card, { title: p.name, url: p.url, primaryLabel: "Read more" });
-    attachPress(card);
-    return card;
-  }
+  const funCard = (p, i) => hCard({
+    id: p.id, title: p.name, desc: p.excerpt, photo: p.image, pinText: "Funcheap",
+    pill: p.cost || p.date || "Free or cheap", pillCls: p.cost && /free/i.test(p.cost) ? "green" : "blue",
+    url: p.url, emoji: "🎈",
+  }, i);
 
-  function tmCard(e, i) {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
-    const day = dayInfo(e.startAt);
-    const where = [e.venue, e.neighborhood].filter(Boolean).join(" · ");
-    const tags = (e.classification ? `<span class="tag tl cat">${escapeHtml(e.classification)}</span>` : "")
-      + (e.price ? `<span class="tag tr ${e.price === "Free" ? "free" : "price"}">${escapeHtml(e.price)}</span>` : "");
-    card.innerHTML = `
-      ${headHtml({ emoji: "🎟️", name: "Ticketmaster", when: whenHtml(day, e.isTimed && e.startAt ? clock(e.startAt) : "") })}
-      <div class="box">
-        <div class="photo-slot"></div>
-        <div class="card-body">
-          <h3 class="title"><a href="${escapeHtml(e.url || "#")}" target="_blank" rel="noreferrer">${escapeHtml(e.name)}</a></h3>
-          ${where ? `<div class="loc">${PIN}<span>${escapeHtml(where)}</span></div>` : ""}
-          <div class="card-foot">
-            <div class="going"><span>${e.isTimed ? "Ticketed" : "Time to be announced"}</span></div>
-            <div class="actions"></div>
-          </div>
-        </div>
-      </div>`;
-    card.querySelector(".photo-slot").replaceWith(photoEl({ src: e.imageUrl, seed: e.id, emoji: "🎟️", href: e.url, tags }));
-    wireActions(card, { title: e.name, url: e.url, primaryLabel: "Get tickets" });
-    attachPress(card);
-    return card;
-  }
+  const tmCard = (e, i) => hCard({
+    id: e.id, title: e.name,
+    desc: `${e.isTimed ? `${dayLabel(e.startAt)} · ${clock(e.startAt)}` : "Time to be announced"}${e.classification ? ` · ${e.classification}` : ""}`,
+    photo: e.imageUrl, pinText: e.venue || e.neighborhood || "SF",
+    pill: e.price || "Ticketed", pillCls: e.price === "Free" ? "green" : "blue", url: e.url, emoji: "🎟️",
+  }, i);
 
-  // Instagram: dated events Gemini pulled out of captions, with the source post as the photo
-  function igCard(e, i) {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+  const igCard = (e, i) => {
     const iso = `${e.startDate}T${e.startTime || "12:00"}:00`;
-    const day = dayInfo(iso);
-    const tags = e.cost ? `<span class="tag tr ${/^free/i.test(e.cost) ? "free" : "price"}">${escapeHtml(e.cost)}</span>` : "";
-    card.innerHTML = `
-      ${headHtml({ emoji: "📸", name: `@${e.handle || "instagram"}`, when: whenHtml(day, e.startTime ? clock(iso) : "") })}
-      <div class="box">
-        <div class="photo-slot"></div>
-        <div class="card-body">
-          <h3 class="title"><a href="${escapeHtml(e.sourceUrl || "#")}" target="_blank" rel="noreferrer">${escapeHtml(e.name)}</a></h3>
-          ${e.venue ? `<div class="loc">${PIN}<span>${escapeHtml(e.venue)}</span></div>` : ""}
-          ${e.oneLine ? `<p class="excerpt">${escapeHtml(e.oneLine)}</p>` : ""}
-          <div class="card-foot">
-            <div class="going"><span>Spotted on Instagram</span></div>
-            <div class="actions"></div>
-          </div>
-        </div>
-      </div>`;
-    card.querySelector(".photo-slot").replaceWith(photoEl({ src: e.imageUrl, seed: e.id, emoji: "📸", href: e.sourceUrl, tags }));
-    wireActions(card, { title: e.name, url: e.sourceUrl, primaryLabel: "See the post" });
-    attachPress(card);
-    return card;
-  }
-
-  // fallback when no dated events could be extracted: the raw recent posts
-  function igPostCard(p, i) {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
-    const text = (p.caption || "").split("\n").filter(Boolean).slice(0, 2).join(" ");
-    card.innerHTML = `
-      ${headHtml({ emoji: "📸", name: `@${p.handle || "instagram"}`, when: `Posted ${escapeHtml(timeAgo(new Date(p.postedAt).getTime()))}` })}
-      <div class="box">
-        <div class="photo-slot"></div>
-        <div class="card-body">
-          ${text ? `<p class="excerpt" style="margin-top:0">${escapeHtml(text.slice(0, 180))}${text.length > 180 ? "…" : ""}</p>` : ""}
-          ${p.location ? `<div class="loc">${PIN}<span>${escapeHtml(p.location)}</span></div>` : ""}
-          <div class="card-foot">
-            <div class="going"><span>${p.likes != null ? `${p.likes} likes` : "Recent post"}</span></div>
-            <div class="actions"></div>
-          </div>
-        </div>
-      </div>`;
-    card.querySelector(".photo-slot").replaceWith(photoEl({ src: p.imageUrl, seed: p.id, emoji: "📸", href: p.url }));
-    wireActions(card, { title: `@${p.handle}`, url: p.url, primaryLabel: "Open post" });
-    attachPress(card);
-    return card;
-  }
+    return hCard({
+      id: e.id, title: e.name,
+      desc: `${dayLabel(iso)}${e.startTime ? ` · ${clock(iso)}` : ""}${e.oneLine ? ` · ${e.oneLine}` : ""}`,
+      photo: e.imageUrl, pinText: e.venue || `@${e.handle}`,
+      pill: e.cost || `@${e.handle}`, pillCls: e.cost && /free/i.test(e.cost) ? "green" : "blue",
+      url: e.sourceUrl, emoji: "📸",
+    }, i);
+  };
+  const igPostCard = (p, i) => hCard({
+    id: p.id, title: `@${p.handle}`,
+    desc: (p.caption || "").split("\n").filter(Boolean).slice(0, 2).join(" ").slice(0, 160),
+    photo: p.imageUrl, pinText: p.location || "Instagram",
+    pill: timeAgo(new Date(p.postedAt).getTime()), pillCls: "gray", url: p.url, emoji: "📸",
+  }, i);
 
   const PERK_EMOJI = ["🌷", "🍵", "🌺", "🖼️", "🎋", "🌿"];
-  function perkCard(p, i) {
-    const card = document.createElement("article");
-    card.className = "perk";
-    card.style.animationDelay = `${i * 0.06}s`;
-    card.innerHTML = `
-      <div class="tile" style="background:${gradFor(p.name)}">${PERK_EMOJI[i % PERK_EMOJI.length]}<span class="pill">Free</span></div>
-      <div class="pb">
-        <div class="pname">${escapeHtml(p.name)}</div>
-        <div class="offer">${escapeHtml(p.offer)}</div>
-        ${p.note ? `<div class="note">${escapeHtml(p.note)}</div>` : ""}
-        <div class="actions"></div>
-      </div>`;
-    wireActions(card, { title: p.name, url: p.url, primaryLabel: "Details" });
-    return card;
-  }
+  const perkCard = (p, i) => hCard({
+    id: `perk-${i}`, title: p.name, desc: `${p.offer}${p.note ? ` ${p.note}` : ""}`,
+    photo: null, pinText: "SF", pill: "Free", pillCls: "green", url: p.url, emoji: PERK_EMOJI[i % PERK_EMOJI.length],
+  }, i);
 
-  // ============================================================
-  // panel states
-  // ============================================================
+  // ---------- rendering helpers ----------
   const stateHtml = ({ emoji, title, body, retry }) => `
-    <div class="state">
-      <span class="big">${emoji}</span>
-      <h3>${title}</h3>
-      <p>${body}</p>
-      ${retry ? `<button class="btn primary" type="button" data-retry="${retry}">Try again</button>` : ""}
-    </div>`;
-  const emptyHtml = (msg = "Nothing here right now 🤍") => stateHtml({ emoji: "🫧", title: msg, body: "Check back after the next sweep." });
-  const skeletonHtml = (n = 3) => Array.from({ length: n }, () => `
-    <div class="skel"><div class="head"></div><div class="box"><div class="img"></div><div class="bar w60"></div><div class="bar w35"></div></div></div>`).join("");
+    <div class="state"><span class="big">${emoji}</span><h3>${title}</h3><p>${body}</p>
+      ${retry ? `<button class="btn" type="button" data-retry="${retry}">Try again</button>` : ""}</div>`;
+  const skeletonHtml = (n = 2) => Array.from({ length: n }, () => `
+    <div class="skel"><div class="b ph"></div><div class="col"><div class="b l1"></div><div class="b l2"></div><div class="b l3"></div></div></div>`).join("");
 
-  function renderList(panel, items, cardFn, { initial = 20, rail = null } = {}) {
-    panel.innerHTML = "";
-    if (!items.length) { panel.innerHTML = emptyHtml(); return; }
-    // the rail only earns its place when it is a real subset, not the whole list again
-    if (rail && rail.length >= 2 && items.length >= rail.length + 3) {
-      panel.insertAdjacentHTML("beforeend", `
-        <div class="section-head"><h2>Soonest</h2><span class="hint">next 48 hours · ${rail.length}</span></div>
-        <div class="rail"></div>
-        <div class="section-head stacked"><h2>All ${items.length}</h2><p>Sorted by start time, real spots from Luma.</p></div>`);
-      const railEl = panel.querySelector(".rail");
-      rail.forEach((e, i) => railEl.appendChild(railCard(e, i)));
-    }
+  function renderList(el, items, cardFn, { initial = 8, empty = "Nothing here right now" } = {}) {
+    el.innerHTML = "";
+    if (!items.length) { el.innerHTML = stateHtml({ emoji: "🫧", title: empty, body: "Check back after the next sweep." }); return; }
     const frag = document.createDocumentFragment();
     items.slice(0, initial).forEach((it, i) => frag.appendChild(cardFn(it, i)));
-    panel.appendChild(frag);
+    el.appendChild(frag);
     if (items.length > initial) {
-      const btn = document.createElement("button");
-      btn.className = "more-btn"; btn.type = "button";
-      btn.textContent = `Show ${items.length - initial} more`;
-      btn.addEventListener("click", () => {
+      const b = document.createElement("button");
+      b.className = "more-btn"; b.type = "button"; b.textContent = `Show ${items.length - initial} more`;
+      b.addEventListener("click", () => {
         Sound.tap();
         const f = document.createDocumentFragment();
         items.slice(initial).forEach((it, i) => f.appendChild(cardFn(it, i)));
-        btn.replaceWith(f);
+        b.replaceWith(f);
       });
-      panel.appendChild(btn);
+      el.appendChild(b);
     }
   }
+  function setPill(id, text) { const el = $(id); if (el.textContent !== String(text)) el.textContent = text; }
 
-  function setCount(id, value) {
-    const el = $(id);
-    if (String(el.textContent) === String(value)) return;
-    el.textContent = value;
-    const chip = el.closest(".chip");
-    if (chip) { chip.classList.remove("bump"); void chip.offsetWidth; chip.classList.add("bump"); }
-    // nav badges only show a real positive number, never a dash or zero
-    if (el.closest(".nav-item")) el.classList.toggle("show", Number(value) > 0);
-  }
-
-  // ============================================================
-  // loaders
-  // ============================================================
-  const state = { events: [], funcheap: [], tm: null, ig: null, perks: [], eventsAt: 0 };
+  // ---------- loaders (API contract unchanged) ----------
+  const state = { events: [], eventsAt: 0, funcheap: [], tm: null, ig: null, perks: [] };
 
   function renderEvents(events) {
-    const byStart = (a, b) => new Date(a.startAt || 0) - new Date(b.startAt || 0);
-    const near = events.filter((e) => !e.isSoldOut && e.isNearCapacity).sort(byStart);
-    const open = events.filter((e) => !e.isSoldOut && !e.isNearCapacity).sort(byStart);
+    const byStart = (a, b) => new Date(a.startAt) - new Date(b.startAt);
+    const live = events.filter((e) => !e.isSoldOut).sort(byStart);
+    const near = live.filter((e) => e.isNearCapacity);
+    const open = live.filter((e) => !e.isNearCapacity);
     const sold = events.filter((e) => e.isSoldOut).sort(byStart);
-    setCount("count-near", near.length);
-    setCount("count-open", open.length);
-    setCount("count-sold", sold.length);
-    const soon = (list) => {
-      const now = Date.now(), cutoff = now + 48 * 3600 * 1000;
-      return list.filter((e) => { const t = new Date(e.startAt).getTime(); return t >= now - 3600 * 1000 && t <= cutoff; }).slice(0, 8);
-    };
-    renderList($("near"), near, lumaCard, { initial: 20, rail: soon(near) });
-    renderList($("open"), open, lumaCard, { initial: 16, rail: soon(open) });
-    renderList($("sold"), sold, lumaCard, { initial: 10 });
+    const now = Date.now(), cutoff = now + 48 * 3600 * 1000;
+    let soon = live.filter((e) => { const t = new Date(e.startAt).getTime(); return t >= now - 3600 * 1000 && t <= cutoff; });
+    if (soon.length < 4) soon = live.slice(0, 8);
+    const rail = $("railSoon");
+    rail.innerHTML = "";
+    if (!soon.length) rail.innerHTML = stateHtml({ emoji: "🫧", title: "Nothing in the next two days", body: "The full list is below." });
+    else soon.slice(0, 10).forEach((e, i) => rail.appendChild(railTile(e, i)));
 
-    // hero host strip: real host avatars from the live events
-    const seen = new Set();
-    const avatars = [];
-    for (const e of events) for (const a of e.hostAvatars ?? []) if (a && !seen.has(a)) { seen.add(a); avatars.push(a); }
-    const free = events.filter((e) => e.isFree).length;
-    const strip = $("hostStrip");
-    strip.innerHTML = avatars.length
-      ? `${stackHtml(avatars, { max: 6 })}<span class="label"><b>${avatars.length}</b> hosts · <b>${events.length}</b> events · <b>${free}</b> free</span>`
-      : `<span class="label"><b>${events.length}</b> events this month</span>`;
-    strip.classList.add("show");
-    $("totals").textContent = `${events.length} events · 30 days`;
+    setPill("nearCount", near.length ? `${near.length} filling up` : "none right now");
+    setPill("openCount", `${open.length}`);
+    const badge = $("navOpenBadge"); badge.textContent = open.length; badge.hidden = !open.length;
+    renderList($("listNear"), near, lumaCard, { initial: 6, empty: "Nothing is close to full right now" });
+    renderList($("listOpen"), open, lumaCard, { initial: 8 });
+    renderList($("listSold"), sold, lumaCard, { initial: 6, empty: "Nothing sold out yet" });
+    $("sold").querySelector("h2").textContent = sold.length ? `Sold out already · ${sold.length}` : "Sold out already";
   }
 
   async function loadEvents(force) {
-    if (!state.events.length) ["near", "open", "sold"].forEach((id) => { $(id).innerHTML = skeletonHtml(); });
+    if (!state.events.length) { $("listNear").innerHTML = skeletonHtml(1); $("listOpen").innerHTML = skeletonHtml(2); }
     try {
       const res = await fetch(`/api/events${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      state.events = data.events ?? [];
-      state.eventsAt = data.updatedAt;
+      state.events = data.events ?? []; state.eventsAt = data.updatedAt;
       renderEvents(state.events);
       $("dot").classList.remove("off");
-      $("updated").textContent = `Checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : " · live"}`;
+      $("updated").textContent = `Luma checked ${timeAgo(data.updatedAt)}${data.fromCache ? " · cached" : " · live"} · ${state.events.length} events in 30 days`;
       return { fresh: !data.fromCache, count: state.events.length };
     } catch (err) {
       if (!state.events.length) {
         const html = stateHtml({ emoji: "🌫️", title: "Luma is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "events" });
-        ["near", "open", "sold"].forEach((id) => { $(id).innerHTML = html; });
-        $("dot").classList.add("off");
-        $("updated").textContent = "Luma unreachable";
+        $("listNear").innerHTML = html; $("listOpen").innerHTML = ""; $("railSoon").innerHTML = "";
+        $("dot").classList.add("off"); $("updated").textContent = "Luma unreachable";
       }
       throw err;
     }
   }
 
   async function loadFuncheap(force) {
-    const el = $("funcheap");
+    const el = $("listFun");
     if (!state.funcheap.length) el.innerHTML = skeletonHtml(2);
     try {
       const res = await fetch(`/api/funcheap${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       state.funcheap = data.posts ?? [];
-      setCount("count-funcheap", state.funcheap.length);
-      renderList(el, state.funcheap, funcheapCard, { initial: 12 });
+      setPill("funCount", `${state.funcheap.length}`);
+      renderList(el, state.funcheap, funCard, { initial: 6 });
       return { fresh: !data.fromCache, count: state.funcheap.length };
     } catch (err) {
-      if (!state.funcheap.length) {
-        el.innerHTML = stateHtml({ emoji: "🎈", title: "Funcheap is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "funcheap" });
-      }
+      if (!state.funcheap.length) el.innerHTML = stateHtml({ emoji: "🎈", title: "Funcheap is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "funcheap" });
       throw err;
     }
   }
 
   async function loadTicketmaster(force) {
-    const el = $("tm");
-    if (!state.tm) el.innerHTML = skeletonHtml(2);
+    const el = $("listTm");
+    if (!state.tm) el.innerHTML = skeletonHtml(1);
     try {
       const res = await fetch(`/api/ticketmaster${force ? "?refresh=1" : ""}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       state.tm = data;
       if (!data.configured) {
-        setCount("count-tm", "–");
-        el.innerHTML = stateHtml({
-          emoji: "🎟️",
-          title: "Ticketmaster isn't connected yet",
-          body: "Concerts, sports and theater show up here once a free Discovery API key is set as <code>TICKETMASTER_API_KEY</code> on the server. Nothing is broken, this lane is just switched off.",
-        });
+        setPill("tmCount", "off");
+        el.innerHTML = stateHtml({ emoji: "🎟️", title: "Not connected yet", body: "Concerts, sports and theater land here once a free Ticketmaster key is set as <code>TICKETMASTER_API_KEY</code>." });
         return { fresh: false, count: 0, off: true };
       }
       const events = data.events ?? [];
-      setCount("count-tm", events.length);
-      renderList(el, events, tmCard, { initial: 16 });
+      setPill("tmCount", `${events.length}`);
+      renderList(el, events, tmCard, { initial: 6 });
       return { fresh: !data.fromCache, count: events.length };
     } catch (err) {
-      if (!state.tm) {
-        el.innerHTML = stateHtml({ emoji: "🎟️", title: "Ticketmaster is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "tm" });
-      }
+      if (!state.tm) el.innerHTML = stateHtml({ emoji: "🎟️", title: "Ticketmaster is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "tm" });
       throw err;
     }
   }
 
+  // Instagram is the one source that can kick off a paid scrape behind a cache
+  // miss, so it never loads on its own: only when someone taps the button,
+  // or lands directly on #instagram. Sweep includes it only after that.
+  let igRequested = false;
   async function loadInstagram(force) {
-    const el = $("ig");
+    igRequested = true;
+    const el = $("listIg");
     if (!state.ig) el.innerHTML = skeletonHtml(2);
     try {
       const res = await fetch(`/api/instagram${force ? "?refresh=1" : ""}`);
@@ -1109,173 +656,110 @@
       if (data.error) throw new Error(data.error);
       state.ig = data;
       if (!data.configured) {
-        setCount("count-ig", "–");
-        el.innerHTML = stateHtml({
-          emoji: "📸",
-          title: "Instagram isn't connected yet",
-          body: "Events spotted on SF Instagram accounts show up here once <code>APIFY_API_KEY</code> is set on the server. Nothing is broken, this lane is just switched off.",
-        });
+        setPill("igCount", "off");
+        el.innerHTML = stateHtml({ emoji: "📸", title: "Not connected yet", body: "Set <code>APIFY_API_KEY</code> on the server to switch this lane on." });
         return { fresh: false, count: 0, off: true };
       }
-      const events = data.events ?? [];
-      const posts = data.posts ?? [];
+      const events = data.events ?? [], posts = data.posts ?? [];
       const handles = (data.accounts ?? []).map((h) => `@${h}`).join(", ");
-      el.innerHTML = "";
+      $("igSub").textContent = `Reading ${handles}`;
       if (events.length) {
-        setCount("count-ig", events.length);
-        el.insertAdjacentHTML("beforeend", `<div class="section-head"><h2>Dated events from captions</h2><span class="hint">${events.length} found · ${posts.length} posts read</span></div>`);
-        const frag = document.createDocumentFragment();
-        events.forEach((e, i) => frag.appendChild(igCard(e, i)));
-        el.appendChild(frag);
+        setPill("igCount", `${events.length}`);
+        renderList(el, events, igCard, { initial: 6 });
       } else if (posts.length) {
-        setCount("count-ig", posts.length);
-        el.insertAdjacentHTML("beforeend", `<div class="section-head"><h2>Recent posts</h2><span class="hint">no dated events found yet</span></div>`);
-        const frag = document.createDocumentFragment();
-        posts.slice(0, 12).forEach((p, i) => frag.appendChild(igPostCard(p, i)));
-        el.appendChild(frag);
+        setPill("igCount", `${posts.length} posts`);
+        renderList(el, posts, igPostCard, { initial: 6 });
       } else {
-        setCount("count-ig", 0);
-        el.innerHTML = emptyHtml(data.refreshing ? "First scrape is running, check back in a couple of minutes" : "Nothing posted in the last 30 days");
+        setPill("igCount", "0");
+        el.innerHTML = stateHtml({ emoji: "📸", title: data.refreshing ? "First scrape is running" : "Nothing posted in the last 30 days", body: data.refreshing ? "Check back in a couple of minutes." : "These accounts have been quiet." });
       }
-      el.insertAdjacentHTML("beforeend", `<p class="hint" style="margin:14px 2px 0;font-size:11.5px;color:var(--muted);font-weight:600;">Reading ${escapeHtml(handles)}. Scraped, not an official feed, so treat it as a tip, not a guarantee.${data.refreshing ? " A fresh scrape is running in the background." : ""}</p>`);
+      if (data.refreshing) toast("A fresh Instagram scrape is running in the background.");
       return { fresh: !data.fromCache, count: events.length || posts.length };
     } catch (err) {
-      if (!state.ig) {
-        el.innerHTML = stateHtml({ emoji: "📸", title: "Instagram is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "ig" });
-      }
+      if (!state.ig) el.innerHTML = stateHtml({ emoji: "📸", title: "Instagram is out of reach right now", body: escapeHtml(err.message || "Try again in a minute."), retry: "ig" });
       throw err;
     }
   }
+  $("igLoad").addEventListener("click", () => { Sound.tap(); loadInstagram(false).catch(() => {}); });
 
   async function loadPerks() {
-    const el = $("perks");
-    el.innerHTML = skeletonHtml(2);
+    const el = $("listPerks");
+    el.innerHTML = skeletonHtml(1);
     try {
       const res = await fetch("/api/perks");
       const data = await res.json();
       state.perks = data.perks ?? [];
-      setCount("count-perks", state.perks.length);
-      el.innerHTML = "";
-      if (!state.perks.length) { el.innerHTML = emptyHtml(); return; }
-      el.insertAdjacentHTML("beforeend", `<div class="section-head stacked"><h2>Free admission</h2><p>Hand-checked as of ${escapeHtml(data.verifiedOn)}. Tap Details for the source page.</p></div>`);
-      state.perks.forEach((p, i) => el.appendChild(perkCard(p, i)));
-      $("footer").innerHTML = `Perks hand-checked as of ${escapeHtml(data.verifiedOn)}. Events come straight from <a href="https://luma.com/discover/sf" target="_blank" rel="noreferrer">Luma</a>, <a href="https://sf.funcheap.com" target="_blank" rel="noreferrer">Funcheap</a> and a handful of SF Instagram accounts, cached briefly to be polite to them.`;
+      setPill("perksCount", `${state.perks.length} free`);
+      $("perksSub").textContent = `Hand-checked as of ${data.verifiedOn}`;
+      renderList(el, state.perks, perkCard, { initial: 6 });
+      $("footer").innerHTML = `Events come straight from <a href="https://luma.com/discover/sf" target="_blank" rel="noreferrer">Luma</a>, <a href="https://sf.funcheap.com" target="_blank" rel="noreferrer">Funcheap</a> and a handful of SF Instagram accounts, cached briefly to be polite to them. Perks hand-checked as of ${escapeHtml(data.verifiedOn)}.`;
     } catch {
       el.innerHTML = stateHtml({ emoji: "🌷", title: "Perks list didn't load", body: "Refresh the page to try again.", retry: "perks" });
     }
   }
 
-  // retry buttons inside state cards
   document.addEventListener("click", (ev) => {
     const btn = ev.target.closest("[data-retry]");
     if (!btn) return;
     Sound.tap();
-    const which = btn.dataset.retry;
-    ({ events: () => loadEvents(false), funcheap: () => loadFuncheap(false), tm: () => loadTicketmaster(false), ig: () => loadInstagram(false), perks: loadPerks })[which]?.().catch(() => {});
+    ({ events: () => loadEvents(false), funcheap: () => loadFuncheap(false), tm: () => loadTicketmaster(false), ig: () => loadInstagram(false), perks: loadPerks })[btn.dataset.retry]?.().catch(() => {});
   });
 
-  // ============================================================
-  // tabs (real sections, hash-addressable)
-  // ============================================================
-  const TABS = ["near", "open", "sold", "funcheap", "tm", "ig", "perks"];
-  function replayEntrance(panel) {
-    panel.querySelectorAll(".card, .perk, .rail-card, .state").forEach((el, i) => {
-      el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
-      if (el.classList.contains("rail-card")) el.style.animationDelay = `${Math.min(i, 8) * 0.06}s`;
-    });
+  // ---------- nav: real section jumps ----------
+  function jump(id) {
+    Sound.tap();
+    if (id === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); history.replaceState(null, "", location.pathname); return; }
+    const el = $(id);
+    if (!el) return;
+    if (id === "instagram" && !igRequested) loadInstagram(false).catch(() => {});
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    history.replaceState(null, "", `#${id}`);
   }
-  // Instagram triggers a real (small-cost) Apify scrape behind the scenes,
-  // so it loads lazily, only the first time someone actually opens that tab,
-  // never eagerly on every page view.
-  let igRequested = false;
-  // bottom nav = the real source lanes; the chip row filters inside the Events lane only
-  const EVENT_TABS = ["near", "open", "sold", "tm"];
-  const laneOf = (id) => (EVENT_TABS.includes(id) ? "events" : id);
-  let lastEventTab = "near";
-  function showTab(id, { silent = false, push = true } = {}) {
-    if (!TABS.includes(id)) id = "near";
-    const lane = laneOf(id);
-    if (lane === "events") lastEventTab = id;
-    $("chipbar").hidden = lane !== "events";
-    document.querySelectorAll(".nav-item").forEach((b) => b.classList.toggle("active", b.dataset.lane === lane));
-    document.querySelectorAll(".chip").forEach((c) => {
-      const on = c.dataset.tab === id;
-      c.classList.toggle("active", on);
-      c.setAttribute("aria-selected", String(on));
-      if (on) c.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
-    });
-    TABS.forEach((t) => { $(t).hidden = t !== id; });
-    if (id === "ig" && !igRequested) { igRequested = true; loadInstagram().catch(() => {}); }
-    replayEntrance($(id));
-    if (!silent) Sound.tap();
-    if (push) history.replaceState(null, "", `#${id}`);
-    const chipbar = $("chipbar");
-    if (!chipbar.hidden && chipbar.classList.contains("stuck")) window.scrollTo({ top: chipbar.offsetTop - 4, behavior: "smooth" });
-    else if (lane !== "events" && window.scrollY > $("chipbar").offsetTop) window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  $("chips").addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".chip");
-    if (btn) showTab(btn.dataset.tab);
-  });
-  $("nav").addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".nav-item");
-    if (!btn) return;
-    const lane = btn.dataset.lane;
-    showTab(lane === "events" ? lastEventTab : lane);
-  });
-  window.addEventListener("hashchange", () => showTab(location.hash.slice(1), { silent: true, push: false }));
+  document.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click", () => jump(b.dataset.nav)));
+  document.querySelectorAll("[data-jump]").forEach((b) => b.addEventListener("click", () => jump(b.dataset.jump)));
+  $("sold").querySelector("summary").addEventListener("click", () => Sound.tap());
 
-  // sticky chip bar shadow
-  const sentinel = document.createElement("div");
-  $("chipbar").before(sentinel);
-  new IntersectionObserver(([e]) => $("chipbar").classList.toggle("stuck", !e.isIntersecting), { rootMargin: "-1px 0px 0px 0px", threshold: 0 }).observe(sentinel);
+  // active nav item follows scroll position
+  const navFor = { soon: "top", near: "open", open: "open", funcheap: "open", instagram: "open", tm: "open", perks: "perks", sold: "perks" };
+  const setActiveNav = (key) => document.querySelectorAll("[data-nav]").forEach((b) => b.classList.toggle("on", b.dataset.nav === key));
+  document.querySelectorAll("section").forEach((s) => {
+    new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) setActiveNav(window.scrollY < 120 ? "top" : navFor[s.id] || "top"); });
+    }, { rootMargin: "-40% 0px -50% 0px" }).observe(s);
+  });
+  window.addEventListener("scroll", () => { if (window.scrollY < 120) setActiveNav("top"); }, { passive: true });
 
-  // ============================================================
-  // the one real action: run the sweep now
-  // ============================================================
+  // ---------- the one real action ----------
   let sweeping = false;
   async function runSweep() {
     if (sweeping) return;
     sweeping = true;
-    const fab = $("refresh");
-    fab.classList.add("busy"); fab.classList.remove("done");
-    $("fabLabel").textContent = "Sweeping";
+    const b = $("sweep"); b.classList.add("busy"); b.classList.remove("done");
     Sound.whoosh();
     const started = Date.now();
-    // Instagram only joins the sweep once someone has actually opened that
-    // tab this visit, a "run sweep" click on the homepage shouldn't quietly
-    // trigger a scrape of a source nobody looked at.
     const jobs = [loadEvents(true), loadFuncheap(true), loadTicketmaster(true)];
     if (igRequested) jobs.push(loadInstagram(true));
     const results = await Promise.allSettled(jobs);
-    await new Promise((r) => setTimeout(r, Math.max(0, 700 - (Date.now() - started)))); // let the spinner read as a real action
+    await new Promise((r) => setTimeout(r, Math.max(0, 700 - (Date.now() - started))));
     const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
-    const failed = results.length - ok.length;
     const fresh = ok.filter((r) => r.fresh);
-    fab.classList.remove("busy"); void fab.offsetWidth; fab.classList.add("done");
-    $("fabLabel").textContent = "Sweep";
+    b.classList.remove("busy"); b.classList.add("done"); setTimeout(() => b.classList.remove("done"), 1600);
     sweeping = false;
     if (!ok.length) { Sound.error(); toast("Every source was unreachable. Try again in a minute."); return; }
     Sound.success();
-    if (fresh.length) {
-      const total = fresh.reduce((a, r) => a + r.count, 0);
-      toast(`Fresh sweep done ✨ ${total} live listings${failed ? `, ${failed} source unreachable` : ""}`);
-    } else {
-      toast("Checked very recently, showing cached results to go easy on the sources.");
-    }
+    if (fresh.length) toast(`Fresh sweep done · ${fresh.reduce((a, r) => a + r.count, 0)} live listings`);
+    else toast("Checked very recently, showing cached results to go easy on the sources.");
   }
-  $("refresh").addEventListener("click", runSweep);
+  $("sweep").addEventListener("click", runSweep);
 
-  // ============================================================
-  // boot
-  // ============================================================
-  showTab(location.hash.slice(1) || "near", { silent: true, push: false });
+  // ---------- boot ----------
   loadEvents(false).catch(() => {});
   loadFuncheap().catch(() => {});
   loadTicketmaster().catch(() => {});
   loadPerks();
-  // Instagram is loaded lazily inside showTab(), only when that tab is opened.
-  setInterval(() => { if (state.eventsAt) $("updated").textContent = $("updated").textContent.replace(/^Checked .*?(?= ·|$)/, `Checked ${timeAgo(state.eventsAt)}`); }, 60000);
+  if (location.hash === "#instagram") loadInstagram(false).catch(() => {});
+  else if (location.hash) { const t = $(location.hash.slice(1)); if (t) setTimeout(() => t.scrollIntoView({ block: "start" }), 300); }
+  setInterval(() => { if (state.eventsAt) $("updated").textContent = $("updated").textContent.replace(/^Luma checked .*?(?= ·)/, `Luma checked ${timeAgo(state.eventsAt)}`); }, 60000);
 </script>
 </body>
 </html>
