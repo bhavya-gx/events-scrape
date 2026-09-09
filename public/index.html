@@ -1109,6 +1109,10 @@
       if (el.classList.contains("rail-card")) el.style.animationDelay = `${Math.min(i, 8) * 0.06}s`;
     });
   }
+  // Instagram triggers a real (small-cost) Apify scrape behind the scenes,
+  // so it loads lazily, only the first time someone actually opens that tab,
+  // never eagerly on every page view.
+  let igRequested = false;
   function showTab(id, { silent = false, push = true } = {}) {
     if (!TABS.includes(id)) id = "near";
     document.querySelectorAll(".chip").forEach((c) => {
@@ -1118,6 +1122,7 @@
       if (on) c.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
     });
     TABS.forEach((t) => { $(t).hidden = t !== id; });
+    if (id === "ig" && !igRequested) { igRequested = true; loadInstagram().catch(() => {}); }
     replayEntrance($(id));
     if (!silent) Sound.tap();
     if (push) history.replaceState(null, "", `#${id}`);
@@ -1147,7 +1152,12 @@
     $("fabLabel").textContent = "Sweeping…";
     Sound.whoosh();
     const started = Date.now();
-    const results = await Promise.allSettled([loadEvents(true), loadFuncheap(true), loadTicketmaster(true), loadInstagram(true)]);
+    // Instagram only joins the sweep once someone has actually opened that
+    // tab this visit, a "run sweep" click on the homepage shouldn't quietly
+    // trigger a scrape of a source nobody looked at.
+    const jobs = [loadEvents(true), loadFuncheap(true), loadTicketmaster(true)];
+    if (igRequested) jobs.push(loadInstagram(true));
+    const results = await Promise.allSettled(jobs);
     await new Promise((r) => setTimeout(r, Math.max(0, 700 - (Date.now() - started)))); // let the spinner read as a real action
     const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
     const failed = results.length - ok.length;
@@ -1173,8 +1183,8 @@
   loadEvents(false).catch(() => {});
   loadFuncheap().catch(() => {});
   loadTicketmaster().catch(() => {});
-  loadInstagram().catch(() => {});
   loadPerks();
+  // Instagram is loaded lazily inside showTab(), only when that tab is opened.
   setInterval(() => { if (state.eventsAt) $("updated").textContent = $("updated").textContent.replace(/^Checked .*?(?= ·|$)/, `Checked ${timeAgo(state.eventsAt)}`); }, 60000);
 </script>
 </body>
