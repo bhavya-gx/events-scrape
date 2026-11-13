@@ -28,3 +28,11 @@ Import the repo. `api/*.js` become serverless functions, `public/` is served sta
 
 - `node tools/shots.mjs` writes QA screenshots of every section at iPhone size to `tools/out/shots/`.
 - `node tools/record.mjs` renders the iPhone mockup video to `tools/out/mockup.mp4` (needs Chrome; ffmpeg comes from `pip install imageio-ffmpeg`).
+
+## Live
+
+https://events-scrape.vercel.app
+
+## License
+
+MIT.

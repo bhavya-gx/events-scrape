@@ -1,7 +1,6 @@
 {
   "name": "sf-perks-sweep",
   "version": "0.1.0",
-  "private": true,
   "description": "What's on in SF: one feed of live events with real spots remaining (Luma), free things to do (Funcheap, Instagram) and hand-checked perks. No login.",
   "main": "server.js",
   "scripts": {
@@ -9,5 +8,10 @@
   },
   "dependencies": {
     "express": "^4.19.2"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bhavya-gx/events-scrape.git"
   }
 }
